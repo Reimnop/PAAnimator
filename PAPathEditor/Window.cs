@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace PAPathEditor
 {
@@ -18,6 +19,8 @@ namespace PAPathEditor
             LineRenderer.Init();
             NodeRenderer.Init();
 
+            GLFW.SwapInterval(144);
+
             base.Run();
         }
 
@@ -29,24 +32,17 @@ namespace PAPathEditor
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
-            LineRenderer.PushDrawData(new LineDrawData { 
-                Points = new Vector2[] 
-                {
-                    new Vector2(-124, 126),
-                    new Vector2(435, 123),
-                    new Vector2(784, 356)
-                }
-            });
-
-            NodeRenderer.PushDrawData(new NodeDrawData
+            PointDrawData drawData;
+            Vector2[] points = new Vector2[256];
+            Random rng = new Random();
+            for (int i = 0; i < 256; i++)
             {
-                Nodes = new Vector2[]
-                {
-                    new Vector2(-124, 126),
-                    new Vector2(435, 123),
-                    new Vector2(784, 356)
-                }
-            });
+                points[i] = (new Vector2((float)rng.NextDouble(), (float)rng.NextDouble()) * 2.0f - Vector2.One) * 428.0f;
+            }
+            drawData.Points = points;
+
+            LineRenderer.PushDrawData(drawData);
+            NodeRenderer.PushDrawData(drawData);
 
             LineRenderer.Render(Matrix4.Identity, Matrix4.CreateOrthographic(Size.X, Size.Y, -1.0f, 1.0f));
             NodeRenderer.Render(Matrix4.Identity, Matrix4.CreateOrthographic(Size.X, Size.Y, -1.0f, 1.0f));

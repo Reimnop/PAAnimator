@@ -7,14 +7,14 @@ using System.Runtime.CompilerServices;
 
 namespace PAPathEditor
 {
-    public struct NodeDrawData
+    public struct PointDrawData
     {
-        public Vector2[] Nodes;
+        public Vector2[] Points;
     }
 
     public static class NodeRenderer
     {
-        private static Queue<NodeDrawData> nodeDrawQueue = new Queue<NodeDrawData>();
+        private static Queue<PointDrawData> nodeDrawQueue = new Queue<PointDrawData>();
 
         private static Shader shader = Shader.NodeShader;
 
@@ -48,7 +48,7 @@ namespace PAPathEditor
             GL.BindBuffer(BufferTarget.ShaderStorageBuffer, 0);
         }
 
-        public static void PushDrawData(NodeDrawData drawData)
+        public static void PushDrawData(PointDrawData drawData)
         {
             nodeDrawQueue.Enqueue(drawData);
         }
@@ -57,9 +57,9 @@ namespace PAPathEditor
         {
             while (nodeDrawQueue.Count > 0)
             {
-                NodeDrawData dd = nodeDrawQueue.Dequeue();
+                PointDrawData dd = nodeDrawQueue.Dequeue();
 
-                GL.NamedBufferData(SSBO, Unsafe.SizeOf<Vector2>() * dd.Nodes.Length, dd.Nodes, BufferUsageHint.DynamicCopy);
+                GL.NamedBufferData(SSBO, Unsafe.SizeOf<Vector2>() * dd.Points.Length, dd.Points, BufferUsageHint.DynamicCopy);
 
                 GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 0, SSBO);
 
@@ -68,7 +68,7 @@ namespace PAPathEditor
 
                 mesh.Use();
 
-                GL.DrawElementsInstanced(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, IntPtr.Zero, dd.Nodes.Length);
+                GL.DrawElementsInstanced(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, IntPtr.Zero, dd.Points.Length);
             }
         }
     }

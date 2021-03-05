@@ -7,14 +7,9 @@ using System.Runtime.CompilerServices;
 
 namespace PAPathEditor
 {
-    public struct LineDrawData
-    {
-        public Vector2[] Points;
-    }
-
     public static class LineRenderer
     {
-        private static Queue<LineDrawData> lineDrawQueue = new Queue<LineDrawData>();
+        private static Queue<PointDrawData> lineDrawQueue = new Queue<PointDrawData>();
 
         private static Shader shader = Shader.LineShader;
 
@@ -36,7 +31,7 @@ namespace PAPathEditor
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         }
 
-        public static void PushDrawData(LineDrawData drawData)
+        public static void PushDrawData(PointDrawData drawData)
         {
             lineDrawQueue.Enqueue(drawData);
         }
@@ -45,7 +40,7 @@ namespace PAPathEditor
         {
             while (lineDrawQueue.Count > 0)
             {
-                LineDrawData dd = lineDrawQueue.Dequeue();
+                PointDrawData dd = lineDrawQueue.Dequeue();
 
                 GL.NamedBufferData(VBO, Unsafe.SizeOf<Vector2>() * dd.Points.Length, dd.Points, BufferUsageHint.DynamicDraw);
 
