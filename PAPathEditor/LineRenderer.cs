@@ -55,8 +55,14 @@ namespace PAPathEditor
             {
                 PointDrawData dd = lineDrawQueue.Dequeue();
 
-                Vector2[] poses = dd.Points.Select(x => x.Position).ToArray();
-                uint[] highlights = dd.Points.Select(x => x.Highlighted).ToArray();
+                Vector2[] poses = new Vector2[dd.Points.Length];
+                uint[] highlights = new uint[dd.Points.Length];
+
+                for (int i = 0; i < poses.Length; i++)
+                {
+                    poses[i] = dd.Points[i].Position;
+                    highlights[i] = dd.Points[i].Highlighted;
+                }
 
                 GL.NamedBufferData(VBO, Unsafe.SizeOf<Vector2>() * poses.Length, poses, BufferUsageHint.DynamicDraw);
 
