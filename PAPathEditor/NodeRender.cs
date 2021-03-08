@@ -18,10 +18,10 @@ namespace PAPathEditor
         public static void Init()
         {
             float[] vertices = new float[] {
-                 0.25f,  0.25f, 0.0f,  // top right
-                 0.25f, -0.25f, 0.0f,  // bottom right
-                -0.25f, -0.25f, 0.0f,  // bottom left
-                -0.25f,  0.25f, 0.0f,  // top left 
+                 0.4f,  0.4f, 0.0f,  // top right
+                 0.4f, -0.4f, 0.0f,  // bottom right
+                -0.4f, -0.4f, 0.0f,  // bottom left
+                -0.4f,  0.4f, 0.0f,  // top left 
             };
 
             uint[] indices = new uint[]

@@ -74,6 +74,7 @@ namespace PAPathEditor
                 GL.DrawArrays(PrimitiveType.LineStrip, 0, dd.Points.Length);
 
                 NodeRenderer.Render(view, projection, poses, highlights);
+                ArrowRenderer.Render(view, projection, poses);
             }
         }
     }

@@ -16,6 +16,7 @@ namespace PAPathEditor
                 API = ContextAPI.OpenGL,
                 Flags = ContextFlags.ForwardCompatible,
                 Profile = ContextProfile.Core,
+                NumberOfSamples = 2,
                 Size = new Vector2i(1600, 900),
                 Title = "Project Arrhythmia Path Editor"
             });

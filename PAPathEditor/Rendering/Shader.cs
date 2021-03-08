@@ -11,6 +11,7 @@ namespace PAPathEditor
         #region DefaultShader
         public static Shader LineShader;
         public static Shader NodeShader;
+        public static Shader ArrowShader;
         #endregion
 
         private static int currentProgram;
@@ -68,6 +69,7 @@ namespace PAPathEditor
         {
             LineShader = FromSourceFile("Assets/Shaders/line-vs.vert", "Assets/Shaders/line-fs.frag");
             NodeShader = FromSourceFile("Assets/Shaders/node-vs.vert", "Assets/Shaders/node-fs.frag");
+            ArrowShader = FromSourceFile("Assets/Shaders/arrow-vs.vert", "Assets/Shaders/arrow-fs.frag");
         }
 
         private static void CompileShader(int shader)
