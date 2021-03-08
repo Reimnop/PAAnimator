@@ -4,9 +4,22 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.CompilerServices;
+using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace PAPathEditor
 {
+    public struct Point
+    {
+        public Vector2 Position;
+        public uint Highlighted;
+    }
+
+    public struct PointDrawData
+    {
+        public Point[] Points;
+    }
+
     public static class LineRenderer
     {
         private static Queue<PointDrawData> lineDrawQueue = new Queue<PointDrawData>();
@@ -42,7 +55,10 @@ namespace PAPathEditor
             {
                 PointDrawData dd = lineDrawQueue.Dequeue();
 
-                GL.NamedBufferData(VBO, Unsafe.SizeOf<Vector2>() * dd.Points.Length, dd.Points, BufferUsageHint.DynamicDraw);
+                Vector2[] poses = dd.Points.Select(x => x.Position).ToArray();
+                uint[] highlights = dd.Points.Select(x => x.Highlighted).ToArray();
+
+                GL.NamedBufferData(VBO, Unsafe.SizeOf<Vector2>() * poses.Length, poses, BufferUsageHint.DynamicDraw);
 
                 shader.Use();
                 shader.SetMatrix4("mvp", view * projection);
@@ -50,6 +66,8 @@ namespace PAPathEditor
                 GL.BindVertexArray(VAO);
 
                 GL.DrawArrays(PrimitiveType.LineStrip, 0, dd.Points.Length);
+
+                NodeRenderer.Render(view, projection, poses, highlights);
             }
         }
     }

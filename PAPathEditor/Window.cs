@@ -19,7 +19,7 @@ namespace PAPathEditor
             LineRenderer.Init();
             NodeRenderer.Init();
 
-            GLFW.SwapInterval(144);
+            GLFW.SwapInterval(2);
 
             base.Run();
         }
@@ -33,19 +33,16 @@ namespace PAPathEditor
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
             PointDrawData drawData;
-            Vector2[] points = new Vector2[256];
-            Random rng = new Random();
-            for (int i = 0; i < 256; i++)
+            drawData.Points = new Point[]
             {
-                points[i] = (new Vector2((float)rng.NextDouble(), (float)rng.NextDouble()) * 2.0f - Vector2.One) * 428.0f;
-            }
-            drawData.Points = points;
+                new Point() { Position = new Vector2(-1f, 8f), Highlighted = 0 },
+                new Point() { Position = new Vector2(-1.25f, 1.94f), Highlighted = 0 },
+                new Point() { Position = new Vector2(2.35f, -18.1f), Highlighted = 1 },
+                new Point() { Position = new Vector2(-4.5f, 8.2f), Highlighted = 0 }
+            };
 
             LineRenderer.PushDrawData(drawData);
-            NodeRenderer.PushDrawData(drawData);
-
-            LineRenderer.Render(Matrix4.Identity, Matrix4.CreateOrthographic(Size.X, Size.Y, -1.0f, 1.0f));
-            NodeRenderer.Render(Matrix4.Identity, Matrix4.CreateOrthographic(Size.X, Size.Y, -1.0f, 1.0f));
+            LineRenderer.Render(Matrix4.Identity, Matrix4.CreateOrthographic(71.1111111111f, 40, -1.0f, 1.0f));
 
             SwapBuffers();
         }
