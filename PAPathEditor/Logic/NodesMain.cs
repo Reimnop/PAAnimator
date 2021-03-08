@@ -1,4 +1,5 @@
 ﻿using OpenTK.Mathematics;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,6 +17,13 @@ namespace PAPathEditor.Logic
 
         public void Update()
         {
+            //undo
+            if ((Input.GetKey(Keys.LeftControl) && Input.GetKeyDown(Keys.Z)) ||
+                (Input.GetKeyDown(Keys.LeftControl) && Input.GetKey(Keys.Z)))
+            {
+                UndoManager.Undo();
+            }
+
             Vector2 rawPos = Input.GetMousePosition();
             Vector2 viewPos = MouseToView(rawPos);
 

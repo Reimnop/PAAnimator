@@ -30,6 +30,8 @@ namespace PAPathEditor.Logic
             if (CheckPoint(currentViewPos))
                 if (Input.GetMouseDown(MouseButton.Button2))
                 {
+                    Vector2 oldPos = Position;
+                    UndoManager.PushUndo(() => Position = oldPos);
                     ImGui.OpenPopup("NodeConfig" + Id);
                 }
 
@@ -53,6 +55,8 @@ namespace PAPathEditor.Logic
             {
                 if (Input.GetMouseDown(MouseButton.Button1))
                 {
+                    Vector2 oldPos = Position;
+                    UndoManager.PushUndo(() => Position = oldPos);
                     dragging = true;
                 }
 
@@ -63,10 +67,8 @@ namespace PAPathEditor.Logic
                 Point.Highlighted = 0;
             }
 
-            if (Input.GetMouseUp(MouseButton.Button1))
-            {
+            if (dragging && Input.GetMouseUp(MouseButton.Button1))
                 dragging = false;
-            }
 
             if (dragging)
             {
