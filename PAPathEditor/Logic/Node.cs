@@ -8,7 +8,7 @@ using System.Text;
 
 namespace PAPathEditor.Logic
 {
-    public class Node
+    public class Node : IDisposable
     {
         public Vector2 Position;
         public Point Point;
@@ -23,6 +23,11 @@ namespace PAPathEditor.Logic
         public Node()
         {
             ImGuiController.RegisterImGui(ImGuiFunc);
+        }
+
+        public void Dispose()
+        {
+            ImGuiController.UnregisterImGui(ImGuiFunc);
         }
 
         private void ImGuiFunc()
@@ -55,6 +60,8 @@ namespace PAPathEditor.Logic
             {
                 if (Input.GetMouseDown(MouseButton.Button1))
                 {
+                    MainController.Nodes.SelectedNode = this;
+
                     Vector2 oldPos = Position;
                     UndoManager.PushUndo(() => Position = oldPos);
                     dragging = true;
@@ -73,6 +80,13 @@ namespace PAPathEditor.Logic
             if (dragging)
             {
                 Vector2 pos = NodesMain.MouseToView(Input.GetMousePosition());
+
+                if (Input.GetKey(Keys.LeftControl))
+                {
+                    pos.X = MathF.Round(pos.X);
+                    pos.Y = MathF.Round(pos.Y);
+                }
+
                 Position = pos;
             }
 

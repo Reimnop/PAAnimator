@@ -26,6 +26,12 @@
     <None Update="Assets\Shaders\arrow-fs.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Assets\Shaders\grid-fs.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Shaders\grid-vs.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Assets\Shaders\node-fs.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

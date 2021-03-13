@@ -36,6 +36,11 @@ namespace PAPathEditor.Gui
             ImGuiFuncs.Add(action);
         }
 
+        public static void UnregisterImGui(Action action)
+        {
+            ImGuiFuncs.Remove(action);
+        }
+
         public void Init()
         {
             Main = this;

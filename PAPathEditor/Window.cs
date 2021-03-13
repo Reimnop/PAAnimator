@@ -14,8 +14,7 @@ namespace PAPathEditor
     public sealed class Window : GameWindow
     {
         public static Window Main { private set; get; }
-
-        private NodesMain nodes;
+        
         private ImGuiController imGuiController;
 
         public Window(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings) 
@@ -27,6 +26,7 @@ namespace PAPathEditor
         {
             Shader.InitDefaults();
 
+            GridRenderer.Init();
             LineRenderer.Init();
             NodeRenderer.Init();
             ArrowRenderer.Init();
@@ -34,19 +34,18 @@ namespace PAPathEditor
             imGuiController = new ImGuiController();
             imGuiController.Init();
 
-            nodes = new NodesMain();
+            MainController.Init();
 
             base.Run();
         }
 
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
-            RenderGlobals.View = Matrix4.Identity;
-            RenderGlobals.Projection = Matrix4.CreateOrthographic(71.1111111111f, 40, -10.0f, 10.0f);
+            ThreadManager.ExecuteAll();
 
             Input.InputUpdate(KeyboardState, MouseState);
 
-            nodes.Update();
+            MainController.Update();
 
             imGuiController.Update((float)args.Time);
         }
@@ -59,6 +58,7 @@ namespace PAPathEditor
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
+            GridRenderer.Render(RenderGlobals.View, RenderGlobals.Projection);
             LineRenderer.Render(RenderGlobals.View, RenderGlobals.Projection);
 
             imGuiController.RenderImGui();
