@@ -4,6 +4,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 using PAAnimator.Gui;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,8 +14,6 @@ namespace PAAnimator.Logic
 {
     public static class MainController
     {
-        public static Project CurrentProject = new Project();
-
         public static NodesManager NodesManager;
 
         private static Vector2 cameraPosition;
@@ -39,7 +38,7 @@ namespace PAAnimator.Logic
             zoomLevel = Math.Clamp(zoomLevel, 8.0f, 90.0f);
 
             RenderGlobals.View = Matrix4.CreateTranslation(-cameraPosition.X, -cameraPosition.Y, 0.0f);
-            RenderGlobals.Projection = Matrix4.CreateOrthographic(Window.Main.Size.X / zoomLevel, Window.Main.Size.Y / zoomLevel, -10.0f, 10.0f);
+            RenderGlobals.Projection = Matrix4.CreateOrthographic(Window.Main.ClientSize.X / zoomLevel, Window.Main.ClientSize.Y / zoomLevel, -10.0f, 10.0f);
 
             NodesManager.Update();
         }
@@ -50,19 +49,25 @@ namespace PAAnimator.Logic
             ImGuiExtension.BeginGlobalDocking();
             ImGui.End();
 
-            //project settings popup
-            if (ImGui.BeginPopup("ProjectSettings"))
-            {
-                ImGui.Text("project settings");
-                ImGui.EndPopup();
-            }
-
             //main menu bar
             if (ImGui.BeginMainMenuBar())
             {
                 if (ImGui.BeginMenu("File"))
                 {
-                    ImGui.MenuItem("Export to prefab...");
+                    if (ImGui.MenuItem("Export to prefab..."))
+                    {
+                        using (var sfd = new SaveFileDialog())
+                        {
+                            sfd.Filter = "Prefab|*.lsp";
+
+                            sfd.ShowDialog();
+
+                            if (!string.IsNullOrEmpty(sfd.FileName))
+                            {
+                                File.WriteAllText(sfd.FileName, ProjectManager.CurrentProject.ToPrefab());
+                            }
+                        }
+                    }
 
                     if (ImGui.BeginMenu("Import"))
                     {
@@ -91,7 +96,7 @@ namespace PAAnimator.Logic
                 {
                     if (ImGui.MenuItem("Project Settings"))
                     {
-                        ImGui.OpenPopup("ProjectSettings");
+                        ProjectManager.CurrentProject.ProjectSettingsOpen = true;
                     }
 
                     ImGui.EndMenu();
@@ -100,6 +105,7 @@ namespace PAAnimator.Logic
                 ImGui.EndMainMenuBar();
             }
 
+            ProjectManager.RenderImGui();
             NodesManager.RenderImGui();
         }
     }

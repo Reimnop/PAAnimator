@@ -6,19 +6,22 @@ uniform mat4 mvp;
 
 out vec3 color;
 
-layout (std430, binding = 0) buffer NodesBuffer {
-	vec2 poses[];
+struct NodeData {
+	mat4 transform;
+	bool highlighted;
 };
 
-layout (std430, binding = 1) buffer HighlightBuffer {
-	uint highlights[];
+layout (std430, binding = 0) buffer NodesBuffer {
+	NodeData data[];
 };
 
 void main() {
-	gl_Position = vec4(vec3(pos.xy + poses[gl_InstanceID], pos.z), 1.0) * mvp;
+	NodeData data = data[gl_InstanceID];
+
+	gl_Position = vec4(pos, 1.0) * data.transform * mvp;
 
 	vec3 mulCol = vec3(1.0);
-	if (highlights[gl_InstanceID] == 1)
+	if (data.highlighted == true)
 		mulCol = vec3(0.4, 0.4, 0.4);
 
 	color = vec3(1.0);

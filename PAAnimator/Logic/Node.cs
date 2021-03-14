@@ -10,7 +10,10 @@ namespace PAAnimator.Logic
 {
     public class Node
     {
-        public Vector2 Position;
+        public Vector2 Position = Vector2.Zero;
+        public Vector2 Scale = Vector2.One;
+        public float Rotation = 0.0f;
+
         public Point Point;
         public float Time;
 
@@ -40,11 +43,11 @@ namespace PAAnimator.Logic
                     dragging = true;
                 }
 
-                Point.Highlighted = 1;
+                Point.Highlighted = true;
             }
             else
             {
-                Point.Highlighted = 0;
+                Point.Highlighted = false;
             }
 
             if (dragging && Input.GetMouseUp(MouseButton.Button1))

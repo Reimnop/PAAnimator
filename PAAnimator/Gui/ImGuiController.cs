@@ -26,8 +26,8 @@ namespace PAAnimator.Gui
         private Texture fontTexture;
         private Shader shader;
         
-        private int windowWidth => Window.Main.Size.X;
-        private int windowHeight => Window.Main.Size.Y;
+        private int windowWidth => Window.Main.ClientSize.X;
+        private int windowHeight => Window.Main.ClientSize.Y;
 
         private static List<Action> ImGuiFuncs = new List<Action>();
 

@@ -4,16 +4,23 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace PAAnimator
 {
+    [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 80)]
+    public struct NodeData
+    {
+        public Matrix4 Transform;
+        public bool Highlighted;
+    }
+
     public static class NodeRenderer
     {
         private static Shader shader = Shader.NodeShader;
 
         private static Mesh mesh;
-        private static int SSBO_0;
-        private static int SSBO_1;
+        private static int SSBO;
 
         public static void Init()
         {
@@ -36,24 +43,27 @@ namespace PAAnimator
             });
 
             //init SSBO
-            SSBO_0 = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ShaderStorageBuffer, SSBO_0);
-            GL.BufferData(BufferTarget.ShaderStorageBuffer, 0, IntPtr.Zero, BufferUsageHint.DynamicCopy);
-            GL.BindBuffer(BufferTarget.ShaderStorageBuffer, 0);
-
-            SSBO_1 = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ShaderStorageBuffer, SSBO_1);
+            SSBO = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ShaderStorageBuffer, SSBO);
             GL.BufferData(BufferTarget.ShaderStorageBuffer, 0, IntPtr.Zero, BufferUsageHint.DynamicCopy);
             GL.BindBuffer(BufferTarget.ShaderStorageBuffer, 0);
         }
 
-        public static void Render(Matrix4 view, Matrix4 projection, Vector2[] poses, uint[] highlights)
+        public static void Render(Matrix4 view, Matrix4 projection, Vector2[] poses, bool[] highlights)
         {
-            GL.NamedBufferData(SSBO_0, Unsafe.SizeOf<Vector2>() * poses.Length, poses, BufferUsageHint.DynamicCopy);
-            GL.NamedBufferData(SSBO_1, sizeof(uint) * highlights.Length, highlights, BufferUsageHint.DynamicCopy);
+            NodeData[] nodeDatas = new NodeData[poses.Length];
 
-            GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 0, SSBO_0);
-            GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 1, SSBO_1);
+            for (int i = 0; i < poses.Length; i++)
+            {
+                nodeDatas[i].Highlighted = highlights[i];
+                nodeDatas[i].Transform = Matrix4.Transpose(
+                    Matrix4.CreateRotationZ(0.0f) * 
+                    Matrix4.CreateTranslation(new Vector3(poses[i])));
+            }
+
+            GL.NamedBufferData(SSBO, Unsafe.SizeOf<NodeData>() * nodeDatas.Length, nodeDatas, BufferUsageHint.DynamicCopy);
+
+            GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 0, SSBO);
 
             shader.Use();
             shader.SetMatrix4("mvp", view * projection);

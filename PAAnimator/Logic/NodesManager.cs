@@ -14,7 +14,7 @@ namespace PAAnimator.Logic
 
         public void RenderImGui()
         {
-            Project prj = MainController.CurrentProject;
+            Project prj = ProjectManager.CurrentProject;
 
             if (ImGui.Begin("Nodes"))
             {
@@ -37,11 +37,22 @@ namespace PAAnimator.Logic
                     goto EndNodeEditWindow;
                 }
 
-                ImGui.InputText("Name", ref SelectedNode.Name, 255);
+                ImGui.InputText("Name", ref SelectedNode.Name, 256);
                 ImGui.DragFloat("Time", ref SelectedNode.Time);
-                ImGuiExtension.DragVector2("Position", ref SelectedNode.Position, Vector2.Zero);
 
-                ImGui.EndPopup();
+                ImGui.Text("Transform");
+
+                ImGui.PushID("node-position");
+                ImGuiExtension.DragVector2("Position", ref SelectedNode.Position, Vector2.Zero);
+                ImGui.PopID();
+
+                ImGui.PushID("node-scale");
+                ImGuiExtension.DragVector2("Scale", ref SelectedNode.Scale, Vector2.One);
+                ImGui.PopID();
+
+                ImGui.PushID("node-rotation");
+                ImGui.DragFloat("Rotation", ref SelectedNode.Rotation);
+                ImGui.PopID();
 
                 if (SelectedNode.Time < 0)
                     SelectedNode.Time = 0;
@@ -59,7 +70,7 @@ namespace PAAnimator.Logic
 
         public void Update()
         {
-            Project prj = MainController.CurrentProject;
+            Project prj = ProjectManager.CurrentProject;
 
             if (Input.GetKeyDown(Keys.Delete) && SelectedNode != null)
             {
@@ -92,7 +103,7 @@ namespace PAAnimator.Logic
             for (int i = 0; i < drawData.Points.Length; i++)
             {
                 if (prj.Nodes[i] == SelectedNode)
-                    prj.Nodes[i].Point.Highlighted = 1;
+                    prj.Nodes[i].Point.Highlighted = true;
 
                 drawData.Points[i] = prj.Nodes[i].Point;
             }
@@ -102,7 +113,7 @@ namespace PAAnimator.Logic
 
         public static Vector2 MouseToView(Vector2 rawPos)
         {
-            Vector2 ndc = new Vector2(rawPos.X / Window.Main.Size.X, rawPos.Y / Window.Main.Size.Y);
+            Vector2 ndc = new Vector2(rawPos.X / Window.Main.ClientSize.X, rawPos.Y / Window.Main.ClientSize.Y);
             ndc = ndc * 2.0f - Vector2.One;
             ndc.Y = -ndc.Y;
 
@@ -113,7 +124,7 @@ namespace PAAnimator.Logic
 
         public static Vector2 MouseDeltaToView(Vector2 delta)
         {
-            Vector2 ndc = new Vector2(delta.X / Window.Main.Size.X, delta.Y / Window.Main.Size.Y);
+            Vector2 ndc = new Vector2(delta.X / Window.Main.ClientSize.X, delta.Y / Window.Main.ClientSize.Y);
             ndc.Y = -ndc.Y;
 
             Vector2 viewPos = (new Vector4(ndc) * RenderGlobals.Projection.Inverted()).Xy;

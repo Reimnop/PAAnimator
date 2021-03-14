@@ -1,5 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
+using PAAnimator.Logic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,11 +43,18 @@ namespace PAAnimator
             if (Background == null)
                 return;
 
+            Project prj = ProjectManager.CurrentProject;
+
+            Matrix4 model =
+                Matrix4.CreateRotationZ(prj.BackgroundRotation) *
+                Matrix4.CreateScale(new Vector3(prj.BackgroundScale.X, prj.BackgroundScale.Y, 1.0f)) *
+                Matrix4.CreateTranslation(new Vector3(prj.BackgroundOffset));
+
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
             shader.Use();
-            shader.SetMatrix4("mvp", view * projection);
+            shader.SetMatrix4("mvp", model * view * projection);
 
             Background.Use(TextureUnit.Texture0);
 

@@ -12,7 +12,7 @@ namespace PAAnimator
     public struct Point
     {
         public Vector2 Position;
-        public uint Highlighted;
+        public bool Highlighted;
     }
 
     public struct PointDrawData
@@ -56,7 +56,7 @@ namespace PAAnimator
                 PointDrawData dd = lineDrawQueue.Dequeue();
 
                 Vector2[] poses = new Vector2[dd.Points.Length];
-                uint[] highlights = new uint[dd.Points.Length];
+                bool[] highlights = new bool[dd.Points.Length];
 
                 for (int i = 0; i < poses.Length; i++)
                 {
