@@ -8,19 +8,23 @@ using System.Text;
 
 namespace PAAnimator.Logic
 {
+    [Serializable]
     public class Node
     {
         public Vector2 Position = Vector2.Zero;
         public Vector2 Scale = Vector2.One;
         public float Rotation = 0.0f;
-
-        public Point Point;
         public float Time;
 
         public string Name;
 
+        [NonSerialized]
+        public Point Point;
+
+        [NonSerialized]
         private bool dragging;
 
+        [NonSerialized]
         private Vector2 currentViewPos;
 
         public Node(string name)

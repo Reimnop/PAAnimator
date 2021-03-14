@@ -54,6 +54,15 @@ namespace PAAnimator.Logic
             {
                 if (ImGui.BeginMenu("File"))
                 {
+                    if (ImGui.MenuItem("Open"))
+                        ProjectManager.OpenProject();
+
+                    if (ImGui.MenuItem("Save"))
+                        ProjectManager.SaveProject();
+
+                    if (ImGui.MenuItem("Save as"))
+                        ProjectManager.SaveProject(true);
+
                     if (ImGui.MenuItem("Export to prefab..."))
                     {
                         using (var sfd = new SaveFileDialog())

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Forms;
 using ImGuiNET;
 using OpenTK.Mathematics;
 using PAAnimator.Gui;
@@ -11,6 +12,7 @@ namespace PAAnimator.Logic
 {
     public static class ProjectManager
     {
+        public static string CurrentProjectPath = null;
         public static Project CurrentProject = new Project();
 
         public static void RenderImGui()
@@ -37,6 +39,46 @@ namespace PAAnimator.Logic
 
                     ImGui.End();
                 }
+        }
+
+        public static void OpenProject()
+        {
+            using (var ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "Project Arrhythmia Animator Project|*.paanim";
+
+                ofd.ShowDialog();
+
+                if (!string.IsNullOrEmpty(ofd.FileName))
+                {
+                    CurrentProjectPath = ofd.FileName;
+                    CurrentProject = Project.FromFile(ofd.FileName);
+                }
+            }
+        }
+
+        public static void SaveProject(bool diff = false)
+        {
+            bool saveAs = diff || string.IsNullOrEmpty(CurrentProjectPath);
+
+            if (saveAs)
+            {
+                using (var sfd = new SaveFileDialog())
+                {
+                    sfd.Filter = "Project Arrhythmia Animator Project|*.paanim";
+
+                    sfd.ShowDialog();
+
+                    if (!string.IsNullOrEmpty(sfd.FileName))
+                    {
+                        CurrentProjectPath = sfd.FileName;
+                        CurrentProject.SerializeToFile(sfd.FileName);
+                    }
+                }
+                return;
+            }
+
+            CurrentProject.SerializeToFile(CurrentProjectPath);
         }
     }
 }

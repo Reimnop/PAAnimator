@@ -3,10 +3,13 @@ using PAPrefabToolkit;
 using PAPrefabToolkit.Data;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
 namespace PAAnimator.Logic
 {
+    [Serializable]
     public class Project
     {
         public List<Node> Nodes = new List<Node>()
@@ -23,6 +26,32 @@ namespace PAAnimator.Logic
         public Vector2 BackgroundOffset = Vector2.Zero;
         public Vector2 BackgroundScale = new Vector2(20.0f * 16.0f / 9.0f, 20.0f);
         public float BackgroundRotation = 0.0f;
+
+        public void SerializeToFile(string path)
+        {
+            using (FileStream fs = new FileStream(path, FileMode.Create))
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+                formatter.Serialize(fs, this);
+
+                fs.Flush();
+            }
+        }
+
+        public static Project FromFile(string path)
+        {
+            Project prj;
+
+            using (FileStream fs = new FileStream(path, FileMode.Open))
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+                prj = (Project)formatter.Deserialize(fs);
+
+                fs.Flush();
+            }
+
+            return prj;
+        }
 
         public string ToPrefab()
         {

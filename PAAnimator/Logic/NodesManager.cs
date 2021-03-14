@@ -103,7 +103,9 @@ namespace PAAnimator.Logic
             for (int i = 0; i < drawData.Points.Length; i++)
             {
                 if (prj.Nodes[i] == SelectedNode)
+                {
                     prj.Nodes[i].Point.Highlighted = true;
+                }
 
                 drawData.Points[i] = prj.Nodes[i].Point;
             }
