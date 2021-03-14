@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 
 using Vector2 = System.Numerics.Vector2;
 
-namespace PAPathEditor.Gui
+namespace PAAnimator.Gui
 {
     /// <summary>
     /// A modified version of Veldrid.ImGui's ImGuiRenderer.

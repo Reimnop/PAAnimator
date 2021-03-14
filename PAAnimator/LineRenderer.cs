@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-namespace PAPathEditor
+namespace PAAnimator
 {
     public struct Point
     {

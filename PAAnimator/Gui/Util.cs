@@ -1,7 +1,7 @@
 ﻿using System;
 using OpenTK.Graphics.OpenGL4;
 
-namespace PAPathEditor.Gui
+namespace PAAnimator.Gui
 {
     static class Util
     {

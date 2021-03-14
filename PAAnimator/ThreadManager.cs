@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PAPathEditor
+namespace PAAnimator
 {
     public static class ThreadManager
     {

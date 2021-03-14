@@ -1,7 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using System;
 
-namespace PAPathEditor
+namespace PAAnimator
 {
     public struct VertexAttrib
     {

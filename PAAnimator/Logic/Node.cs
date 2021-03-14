@@ -1,55 +1,28 @@
 ﻿using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using PAPathEditor.Gui;
+using PAAnimator.Gui;
 using ImGuiNET;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace PAPathEditor.Logic
+namespace PAAnimator.Logic
 {
-    public class Node : IDisposable
+    public class Node
     {
         public Vector2 Position;
         public Point Point;
         public float Time;
 
-        public ulong Id;
+        public string Name;
 
         private bool dragging;
 
         private Vector2 currentViewPos;
 
-        public Node()
+        public Node(string name)
         {
-            ImGuiController.RegisterImGui(ImGuiFunc);
-        }
-
-        public void Dispose()
-        {
-            ImGuiController.UnregisterImGui(ImGuiFunc);
-        }
-
-        private void ImGuiFunc()
-        {
-            if (CheckPoint(currentViewPos))
-                if (Input.GetMouseDown(MouseButton.Button2))
-                {
-                    Vector2 oldPos = Position;
-                    UndoManager.PushUndo(() => Position = oldPos);
-                    ImGui.OpenPopup("NodeConfig" + Id);
-                }
-
-            if (ImGui.BeginPopup("NodeConfig" + Id))
-            {
-                ImGui.DragFloat("Time", ref Time);
-                ImGuiExtension.DragVector2("Position", ref Position, Vector2.Zero);
-
-                ImGui.EndPopup();
-            }
-
-            if (Time < 0)
-                Time = 0;
+            Name = name;
         }
 
         public void Update(Vector2 viewPos)
@@ -60,7 +33,7 @@ namespace PAPathEditor.Logic
             {
                 if (Input.GetMouseDown(MouseButton.Button1))
                 {
-                    MainController.Nodes.SelectedNode = this;
+                    MainController.NodesManager.SelectedNode = this;
 
                     Vector2 oldPos = Position;
                     UndoManager.PushUndo(() => Position = oldPos);
@@ -79,7 +52,7 @@ namespace PAPathEditor.Logic
 
             if (dragging)
             {
-                Vector2 pos = NodesMain.MouseToView(Input.GetMousePosition());
+                Vector2 pos = NodesManager.MouseToView(Input.GetMousePosition());
 
                 if (Input.GetKey(Keys.LeftControl))
                 {

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.CompilerServices;
 
-namespace PAPathEditor
+namespace PAAnimator
 {
     public static class ArrowRenderer
     {

@@ -1,7 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using System;
 
-namespace PAPathEditor.Gui
+namespace PAAnimator.Gui
 {
     public sealed class ImMesh : IDisposable
     {

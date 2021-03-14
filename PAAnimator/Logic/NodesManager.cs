@@ -3,55 +3,28 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
 using System.Collections.Generic;
 using ImGuiNET;
-using PAPathEditor.Gui;
+using PAAnimator.Gui;
 using System.Text;
 
-namespace PAPathEditor.Logic
+namespace PAAnimator.Logic
 {
-    public class NodesMain : IDisposable
+    public class NodesManager
     {
-        private List<Node> nodes = new List<Node>()
-        {
-            new Node() { Time = 0, Position = new Vector2(11, 1.3f), Id = 0 },
-            new Node() { Time = 1, Position = new Vector2(1.1f, 13), Id = 1 },
-            new Node() { Time = 2, Position = new Vector2(13, -5.6f), Id = 2 }
-        };
-
         public Node SelectedNode;
 
-        public NodesMain()
+        public void RenderImGui()
         {
-            ImGuiController.RegisterImGui(RenderImGui);
-        }
-
-        public void Dispose()
-        {
-            ImGuiController.UnregisterImGui(RenderImGui);
-        }
-
-        private void RenderImGui()
-        {
-            if (ImGui.BeginMainMenuBar())
-            {
-                if (ImGui.BeginMenu("File"))
-                {
-                    ImGui.MenuItem("Export to prefab...");
-
-                    ImGui.EndMenu();
-                }
-
-                ImGui.EndMainMenuBar();
-            }
+            Project prj = MainController.CurrentProject;
 
             if (ImGui.Begin("Nodes"))
             {
                 if (ImGui.Button("Add Node"))
                 {
-                    ThreadManager.ExecuteOnMainThread(() => nodes.Add(new Node()));
+                    ThreadManager.ExecuteOnMainThread(() => prj.Nodes.Add(new Node("Untitled Node")));
                 }
 
-                for (int i = 0; i < nodes.Count; i++)
-                    RenderNodeProp(nodes[i]);
+                for (int i = 0; i < prj.Nodes.Count; i++)
+                    RenderNodeProp(prj.Nodes[i]);
 
                 ImGui.End();
             }
@@ -64,6 +37,7 @@ namespace PAPathEditor.Logic
                     goto EndNodeEditWindow;
                 }
 
+                ImGui.InputText("Name", ref SelectedNode.Name, 255);
                 ImGui.DragFloat("Time", ref SelectedNode.Time);
                 ImGuiExtension.DragVector2("Position", ref SelectedNode.Position, Vector2.Zero);
 
@@ -79,16 +53,17 @@ namespace PAPathEditor.Logic
 
         private void RenderNodeProp(Node node)
         {
-            if (ImGui.Selectable($"Time: {node.Time} // Position: {node.Position}", SelectedNode == node))
+            if (ImGui.Selectable($"Time: {node.Time} // {node.Name}", SelectedNode == node))
                 SelectedNode = node;
         }
 
         public void Update()
         {
+            Project prj = MainController.CurrentProject;
+
             if (Input.GetKeyDown(Keys.Delete) && SelectedNode != null)
             {
-                nodes.Remove(SelectedNode);
-                SelectedNode.Dispose();
+                prj.Nodes.Remove(SelectedNode);
                 SelectedNode = null;
             }
 
@@ -102,18 +77,24 @@ namespace PAPathEditor.Logic
             Vector2 rawPos = Input.GetMousePosition();
             Vector2 viewPos = MouseToView(rawPos);
 
-            nodes.ForEach(x =>
+            if (Input.GetMouseDown(MouseButton.Button1) && !ImGui.GetIO().WantCaptureMouse)
+                SelectedNode = null;
+
+            prj.Nodes.ForEach(x =>
             {
                 x.Update(viewPos);
             });
 
-            nodes.Sort((x, y) => x.Time.CompareTo(y.Time));
+            prj.Nodes.Sort((x, y) => x.Time.CompareTo(y.Time));
 
             PointDrawData drawData;
-            drawData.Points = new Point[nodes.Count];
+            drawData.Points = new Point[prj.Nodes.Count];
             for (int i = 0; i < drawData.Points.Length; i++)
             {
-                drawData.Points[i] = nodes[i].Point;
+                if (prj.Nodes[i] == SelectedNode)
+                    prj.Nodes[i].Point.Highlighted = 1;
+
+                drawData.Points[i] = prj.Nodes[i].Point;
             }
 
             LineRenderer.PushDrawData(drawData);

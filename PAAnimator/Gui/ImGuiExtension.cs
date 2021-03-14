@@ -1,7 +1,7 @@
 ﻿using ImGuiNET;
 using OpenTK.Mathematics;
 
-namespace PAPathEditor.Gui
+namespace PAAnimator.Gui
 {
     public static class ImGuiExtension
     {
@@ -38,7 +38,6 @@ namespace PAPathEditor.Gui
             ImGui.SameLine();
             ImGui.Text(label);
         }
-
         public static void DragVector3(string label, ref Vector3 value, Vector3 defaultValue, float speed = 1.0f)
         {
             ImGui.PushID("X-btn");
@@ -149,6 +148,32 @@ namespace PAPathEditor.Gui
 
             ImGui.SameLine();
             ImGui.Text(label);
+        }
+
+        public static void BeginGlobalDocking()
+        {
+            ImGuiViewportPtr viewport = ImGui.GetMainViewport();
+
+            ImGui.SetNextWindowPos(viewport.Pos);
+            ImGui.SetNextWindowSize(viewport.Size);
+            ImGui.SetNextWindowViewport(viewport.ID);
+            ImGui.SetNextWindowBgAlpha(0.0f);
+
+            ImGuiWindowFlags windowFlags = ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.MenuBar;
+
+            windowFlags |= ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoCollapse;
+            windowFlags |= ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove;
+            windowFlags |= ImGuiWindowFlags.NoBringToFrontOnFocus | ImGuiWindowFlags.NoNavFocus;
+
+            ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 0.0f);
+            ImGui.PushStyleVar(ImGuiStyleVar.WindowBorderSize, 0.0f);
+            ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, System.Numerics.Vector2.Zero);
+            ImGui.Begin("imgui-docking", windowFlags);
+            ImGui.PopStyleVar(3);
+
+            uint dockspaceID = ImGui.GetID("default-dockspace");
+            ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags.PassthruCentralNode;
+            ImGui.DockSpace(dockspaceID, System.Numerics.Vector2.Zero, dockspaceFlags);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
-namespace PAPathEditor
+namespace PAAnimator
 {
     public enum Axis
     {

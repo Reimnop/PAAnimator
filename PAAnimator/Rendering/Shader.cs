@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace PAPathEditor
+namespace PAAnimator
 {
     public sealed class Shader : IDisposable
     {

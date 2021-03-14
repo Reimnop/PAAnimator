@@ -6,20 +6,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PAPathEditor
+namespace PAAnimator
 {
-    public static class GridRenderer
+    public static class BackgroundRenderer
     {
-        private static Shader shader = Shader.Grid;
+        private static Shader shader = Shader.Background;
         private static Mesh mesh;
+
+        public static Texture Background;
 
         public static void Init()
         {
             float[] vertices = new float[] {
-                 1.0f,  1.0f, 0.0f,  // top right
-                 1.0f, -1.0f, 0.0f,  // bottom right
-                -1.0f, -1.0f, 0.0f,  // bottom left
-                -1.0f,  1.0f, 0.0f,  // top left 
+                 1.0f,  1.0f, 0.0f, 1.0f, 0.0f, // top right
+                 1.0f, -1.0f, 0.0f, 1.0f, 1.0f, // bottom right
+                -1.0f, -1.0f, 0.0f, 0.0f, 1.0f, // bottom left
+                -1.0f,  1.0f, 0.0f, 0.0f, 0.0f  // top left 
             };
 
             uint[] indices = new uint[]
@@ -30,18 +32,23 @@ namespace PAPathEditor
 
             mesh = new Mesh("Node", vertices, indices, new VertexAttrib[]
             {
-                new VertexAttrib(0, 3)
+                new VertexAttrib(0, 3),
+                new VertexAttrib(1, 2)
             });
         }
 
         public static void Render(Matrix4 view, Matrix4 projection)
         {
+            if (Background == null)
+                return;
+
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
             shader.Use();
-            shader.SetMatrix4("viewInverse", view.Inverted());
-            shader.SetMatrix4("projInverse", projection.Inverted());
+            shader.SetMatrix4("mvp", view * projection);
+
+            Background.Use(TextureUnit.Texture0);
 
             mesh.Use();
 

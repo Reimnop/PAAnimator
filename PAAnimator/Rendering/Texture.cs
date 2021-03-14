@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
 
-namespace PAPathEditor
+namespace PAAnimator
 {
     public sealed class Texture : IDisposable
     {
@@ -37,7 +37,7 @@ namespace PAPathEditor
             return this;
         }
 
-        public Texture FromByteArray(int width, int height, byte[] data, PixelInternalFormat internalFormat = PixelInternalFormat.SrgbAlpha, PixelFormat format = PixelFormat.Bgra, PixelType pixelType = PixelType.UnsignedByte)
+        public Texture FromByteArray(int width, int height, byte[] data, PixelInternalFormat internalFormat = PixelInternalFormat.Rgba, PixelFormat format = PixelFormat.Bgra, PixelType pixelType = PixelType.UnsignedByte)
         {
             handle = GL.GenTexture();
             GL.BindTexture(TextureTarget.Texture2D, handle);
@@ -53,7 +53,7 @@ namespace PAPathEditor
             return this;
         }
 
-        public Texture FromIntPtr(int width, int height, IntPtr data, PixelInternalFormat internalFormat = PixelInternalFormat.SrgbAlpha, PixelFormat format = PixelFormat.Bgra, PixelType pixelType = PixelType.UnsignedByte)
+        public Texture FromIntPtr(int width, int height, IntPtr data, PixelInternalFormat internalFormat = PixelInternalFormat.Rgba, PixelFormat format = PixelFormat.Bgra, PixelType pixelType = PixelType.UnsignedByte)
         {
             handle = GL.GenTexture();
             GL.BindTexture(TextureTarget.Texture2D, handle);

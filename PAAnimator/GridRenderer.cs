@@ -6,11 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PAPathEditor
+namespace PAAnimator
 {
-    public static class BackgroundRenderer
+    public static class GridRenderer
     {
-        private static Shader shader = Shader.Background;
+        private static Shader shader = Shader.Grid;
         private static Mesh mesh;
 
         public static void Init()
@@ -40,7 +40,8 @@ namespace PAPathEditor
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
             shader.Use();
-            shader.SetMatrix4("mvp", view * projection);
+            shader.SetMatrix4("viewInverse", view.Inverted());
+            shader.SetMatrix4("projInverse", projection.Inverted());
 
             mesh.Use();
 

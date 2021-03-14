@@ -6,10 +6,10 @@ using System.Text;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using PAPathEditor.Logic;
-using PAPathEditor.Gui;
+using PAAnimator.Logic;
+using PAAnimator.Gui;
 
-namespace PAPathEditor
+namespace PAAnimator
 {
     public sealed class Window : GameWindow
     {
@@ -26,6 +26,7 @@ namespace PAPathEditor
         {
             Shader.InitDefaults();
 
+            BackgroundRenderer.Init();
             GridRenderer.Init();
             LineRenderer.Init();
             NodeRenderer.Init();
@@ -58,6 +59,7 @@ namespace PAPathEditor
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
+            BackgroundRenderer.Render(RenderGlobals.View, RenderGlobals.Projection);
             GridRenderer.Render(RenderGlobals.View, RenderGlobals.Projection);
             LineRenderer.Render(RenderGlobals.View, RenderGlobals.Projection);
 
