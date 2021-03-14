@@ -20,6 +20,8 @@ namespace PAAnimator.Logic
             NodesManager = new NodesManager();
             NodesManager.Init();
 
+            DocumentationManager.Init(File.ReadAllText("Assets/Documentation.txt"));
+
             ImGuiController.RegisterImGui(ImGuiRender);
         }
 
@@ -109,11 +111,22 @@ namespace PAAnimator.Logic
                     ImGui.EndMenu();
                 }
 
+                if (ImGui.BeginMenu("Help"))
+                {
+                    if (ImGui.MenuItem("Documentation"))
+                    {
+                        DocumentationManager.WindowOpen = true;
+                    }
+                    ImGui.EndMenu();
+                }
+
                 ImGui.EndMainMenuBar();
             }
 
             ProjectManager.RenderImGui();
             NodesManager.RenderImGui();
+
+            DocumentationManager.RenderImGui();
         }
     }
 }
