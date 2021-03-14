@@ -73,20 +73,23 @@ namespace PAAnimator.Logic
                 {
                     Time = node.Time,
                     X = node.Position.X,
-                    Y = node.Position.Y
+                    Y = node.Position.Y,
+                    CurveType = node.PositionEasing
                 });
 
                 prefabObject.ObjectEvents.ScaleEvents.Add(new PrefabObject.Events.ScaleEvent
                 {
                     Time = node.Time,
                     X = node.Scale.X,
-                    Y = node.Scale.Y
+                    Y = node.Scale.Y,
+                    CurveType = node.ScaleEasing
                 });
 
                 prefabObject.ObjectEvents.RotationEvents.Add(new PrefabObject.Events.RotationEvent
                 {
                     Time = node.Time,
-                    X = node.Rotation
+                    X = node.Rotation,
+                    CurveType = node.RotationEasing
                 });
             }
 
