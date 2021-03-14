@@ -1,11 +1,9 @@
-﻿using OpenTK.Mathematics;
+﻿using ImGuiNET;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using System;
-using System.Collections.Generic;
-using ImGuiNET;
 using PAAnimator.Gui;
 using PAPrefabToolkit.Data;
-using System.Text;
+using System;
 
 namespace PAAnimator.Logic
 {

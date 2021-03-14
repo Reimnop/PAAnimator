@@ -1,8 +1,6 @@
-﻿using OpenTK.Mathematics;
-using OpenTK.Graphics.OpenGL4;
+﻿using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.CompilerServices;
 
 namespace PAAnimator

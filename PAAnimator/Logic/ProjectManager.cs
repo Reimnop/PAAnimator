@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
-using ImGuiNET;
+﻿using ImGuiNET;
 using OpenTK.Mathematics;
 using PAAnimator.Gui;
-using PAPrefabToolkit;
-using PAPrefabToolkit.Data;
+using System.Windows.Forms;
 
 namespace PAAnimator.Logic
 {

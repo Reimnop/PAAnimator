@@ -1,13 +1,8 @@
-﻿using OpenTK.Windowing.Desktop;
+﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
-using OpenTK.Windowing.GraphicsLibraryFramework;
-using PAAnimator.Logic;
+using OpenTK.Windowing.Desktop;
 using PAAnimator.Gui;
+using PAAnimator.Logic;
 
 namespace PAAnimator
 {
