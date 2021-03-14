@@ -5,16 +5,23 @@ using ImGuiNET;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using PAPrefabToolkit;
+using PAPrefabToolkit.Data;
 
 namespace PAAnimator.Logic
 {
     [Serializable]
     public class Node
     {
+        public float Time;
+
         public Vector2 Position = Vector2.Zero;
         public Vector2 Scale = Vector2.One;
         public float Rotation = 0.0f;
-        public float Time;
+
+        public PrefabObjectEasing PositionEasing = PrefabObjectEasing.Linear;
+        public PrefabObjectEasing ScaleEasing = PrefabObjectEasing.Linear;
+        public PrefabObjectEasing RotationEasing = PrefabObjectEasing.Linear;
 
         public string Name;
 

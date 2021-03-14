@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using ImGuiNET;
 using PAAnimator.Gui;
+using PAPrefabToolkit.Data;
 using System.Text;
 
 namespace PAAnimator.Logic
@@ -11,6 +12,13 @@ namespace PAAnimator.Logic
     public class NodesManager
     {
         public Node SelectedNode;
+
+        private PrefabObjectEasing[] easings;
+
+        public void Init()
+        {
+            easings = (PrefabObjectEasing[])Enum.GetValues(typeof(PrefabObjectEasing));
+        }
 
         public void RenderImGui()
         {
@@ -29,6 +37,7 @@ namespace PAAnimator.Logic
                 ImGui.End();
             }
 
+            //node editor
             if (ImGui.Begin("Node Editor"))
             {
                 if (SelectedNode == null)
@@ -53,6 +62,41 @@ namespace PAAnimator.Logic
                 ImGui.PushID("node-rotation");
                 ImGui.DragFloat("Rotation", ref SelectedNode.Rotation);
                 ImGui.PopID();
+
+                ImGui.Text("Animation");
+
+                if (ImGui.BeginCombo("Position Easing", SelectedNode.PositionEasing.ToString()))
+                {
+                    for (int i = 0; i < easings.Length; i++)
+                    {
+                        if (ImGui.Selectable(easings[i].ToString(), SelectedNode.PositionEasing == easings[i]))
+                            SelectedNode.PositionEasing = easings[i];
+                    }
+
+                    ImGui.EndCombo();
+                }
+
+                if (ImGui.BeginCombo("Scale Easing", SelectedNode.ScaleEasing.ToString()))
+                {
+                    for (int i = 0; i < easings.Length; i++)
+                    {
+                        if (ImGui.Selectable(easings[i].ToString(), SelectedNode.ScaleEasing == easings[i]))
+                            SelectedNode.ScaleEasing = easings[i];
+                    }
+
+                    ImGui.EndCombo();
+                }
+
+                if (ImGui.BeginCombo("Rotation Easing", SelectedNode.RotationEasing.ToString()))
+                {
+                    for (int i = 0; i < easings.Length; i++)
+                    {
+                        if (ImGui.Selectable(easings[i].ToString(), SelectedNode.RotationEasing == easings[i]))
+                            SelectedNode.RotationEasing = easings[i];
+                    }
+
+                    ImGui.EndCombo();
+                }
 
                 if (SelectedNode.Time < 0)
                     SelectedNode.Time = 0;

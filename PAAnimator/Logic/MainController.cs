@@ -22,6 +22,7 @@ namespace PAAnimator.Logic
         public static void Init()
         {
             NodesManager = new NodesManager();
+            NodesManager.Init();
 
             ImGuiController.RegisterImGui(ImGuiRender);
         }
@@ -33,7 +34,8 @@ namespace PAAnimator.Logic
                 cameraPosition -= NodesManager.MouseDeltaToView(Input.GetMouseDelta()) * 2.0f;
             }
 
-            zoomLevel += Window.Main.MouseState.ScrollDelta.Y * 2.0f;
+            if (!ImGui.GetIO().WantCaptureMouse)
+                zoomLevel += Window.Main.MouseState.ScrollDelta.Y * 2.0f;
 
             zoomLevel = Math.Clamp(zoomLevel, 8.0f, 90.0f);
 
