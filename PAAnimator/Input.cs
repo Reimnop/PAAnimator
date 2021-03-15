@@ -93,5 +93,17 @@ namespace PAAnimator
             }
             return 0;
         }
+        public static bool GetKeyCombo(params Keys[] keys)
+        {
+            bool anyKey = false;
+            for (int i = 0; i < keys.Length; i++)
+                anyKey = anyKey || GetKeyDown(keys[i]);
+
+            bool pressed = true;
+            for (int i = 0; i < keys.Length; i++)
+                pressed = pressed && GetKey(keys[i]);
+
+            return pressed && anyKey;
+        }
     }
 }

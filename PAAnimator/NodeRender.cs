@@ -54,9 +54,7 @@ namespace PAAnimator
             for (int i = 0; i < poses.Length; i++)
             {
                 nodeDatas[i].Highlighted = highlights[i];
-                nodeDatas[i].Transform = Matrix4.Transpose(
-                    Matrix4.CreateRotationZ(0.0f) * 
-                    Matrix4.CreateTranslation(new Vector3(poses[i])));
+                nodeDatas[i].Transform = Matrix4.Transpose(Matrix4.CreateTranslation(new Vector3(poses[i])));
             }
 
             GL.NamedBufferData(SSBO, Unsafe.SizeOf<NodeData>() * nodeDatas.Length, nodeDatas, BufferUsageHint.DynamicCopy);

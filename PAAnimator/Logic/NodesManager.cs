@@ -123,11 +123,8 @@ namespace PAAnimator.Logic
             }
 
             //undo
-            if ((Input.GetKey(Keys.LeftControl) && Input.GetKeyDown(Keys.Z)) ||
-                (Input.GetKeyDown(Keys.LeftControl) && Input.GetKey(Keys.Z)))
-            {
+            if (Input.GetKeyCombo(Keys.LeftControl, Keys.Z))
                 UndoManager.Undo();
-            }
 
             Vector2 rawPos = Input.GetMousePosition();
             Vector2 viewPos = MouseToView(rawPos);

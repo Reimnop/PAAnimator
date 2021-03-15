@@ -8,6 +8,7 @@ namespace PAAnimator.Logic
     [Serializable]
     public class Node
     {
+        public string Name;
         public float Time;
 
         public Vector2 Position = Vector2.Zero;
@@ -17,8 +18,6 @@ namespace PAAnimator.Logic
         public PrefabObjectEasing PositionEasing = PrefabObjectEasing.Linear;
         public PrefabObjectEasing ScaleEasing = PrefabObjectEasing.Linear;
         public PrefabObjectEasing RotationEasing = PrefabObjectEasing.Linear;
-
-        public string Name;
 
         [NonSerialized]
         public Point Point;

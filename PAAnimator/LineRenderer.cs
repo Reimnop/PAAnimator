@@ -65,6 +65,7 @@ namespace PAAnimator
 
                 shader.Use();
                 shader.SetMatrix4("mvp", view * projection);
+                shader.SetVector3("color", new Vector3(0.8f, 0.8f, 0.8f));
 
                 GL.BindVertexArray(VAO);
 
