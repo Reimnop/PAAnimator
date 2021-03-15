@@ -24,61 +24,56 @@ namespace PAAnimator.Logic
         public Point Point;
 
         [NonSerialized]
-        private bool dragging;
-
-        [NonSerialized]
-        private Vector2 currentViewPos;
+        private Vector2 temp;
 
         public Node(string name)
         {
             Name = name;
         }
 
+        public void Check(Vector2 viewPos)
+        {
+            if (CheckPoint(viewPos) && Input.GetMouseDown(MouseButton.Button1))
+            {
+                NodesManager.SelectedNode = this;
+                NodesManager.CurrentlyDragging = this;
+
+                temp = Position;
+            }
+        }
+
         public void Update(Vector2 viewPos)
         {
-            currentViewPos = viewPos;
-
-            if (CheckPoint(currentViewPos))
-            {
-                if (Input.GetMouseDown(MouseButton.Button1))
-                {
-                    MainController.NodesManager.SelectedNode = this;
-
-                    Vector2 oldPos = Position;
-                    UndoManager.PushUndo(() => Position = oldPos);
-                    dragging = true;
-                }
-
-                Point.Highlighted = true;
-            }
-            else
-            {
-                Point.Highlighted = false;
-            }
-
-            if (dragging && Input.GetMouseUp(MouseButton.Button1))
-                dragging = false;
-
-            if (dragging)
-            {
-                Vector2 pos = NodesManager.MouseToView(Input.GetMousePosition());
-
-                if (Input.GetKey(Keys.LeftControl))
-                {
-                    pos.X = MathF.Round(pos.X);
-                    pos.Y = MathF.Round(pos.Y);
-                }
-
-                Position = pos;
-            }
-
             Point.Position = Position;
+
+            if (CheckPoint(viewPos))
+                Point.Highlighted = true;
+            else
+                Point.Highlighted = false;
+        }
+
+        public void OnDrag()
+        {
+            if (Input.GetMouseUp(MouseButton.Button1))
+            {
+                NodesManager.CurrentlyDragging = null;
+                return;
+            }
+            
+            temp += NodesManager.MouseDeltaToView(Window.Main.MouseState.Delta) * 2.0f;
+            Position = temp;
+
+            if (Input.GetKey(Keys.LeftControl))
+            {
+                Position.X = MathF.Round(Position.X);
+                Position.Y = MathF.Round(Position.Y);
+            }
         }
 
         public bool CheckPoint(Vector2 pos)
         {
-            Vector2 lowerLeft = Position - new Vector2(0.4f, 0.4f);
-            Vector2 upperRight = Position + new Vector2(0.4f, 0.4f);
+            Vector2 lowerLeft = Position - new Vector2(0.5f, 0.5f);
+            Vector2 upperRight = Position + new Vector2(0.5f, 0.5f);
 
             if (pos.X > lowerLeft.X && pos.Y > lowerLeft.Y &&
                 pos.X < upperRight.X && pos.Y < upperRight.Y)

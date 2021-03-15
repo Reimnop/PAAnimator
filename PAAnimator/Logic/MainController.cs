@@ -10,14 +10,11 @@ namespace PAAnimator.Logic
 {
     public static class MainController
     {
-        public static NodesManager NodesManager;
-
         private static Vector2 cameraPosition;
         private static float zoomLevel = 18.0f;
 
         public static void Init()
         {
-            NodesManager = new NodesManager();
             NodesManager.Init();
 
             DocumentationManager.Init(File.ReadAllText("Assets/Documentation.txt"));

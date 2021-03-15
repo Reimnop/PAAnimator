@@ -7,18 +7,20 @@ using System;
 
 namespace PAAnimator.Logic
 {
-    public class NodesManager
+    public static class NodesManager
     {
-        public Node SelectedNode;
+        public static Node CurrentlyDragging = null;
 
-        private PrefabObjectEasing[] easings;
+        public static Node SelectedNode;
 
-        public void Init()
+        private static PrefabObjectEasing[] easings;
+
+        public static void Init()
         {
             easings = (PrefabObjectEasing[])Enum.GetValues(typeof(PrefabObjectEasing));
         }
 
-        public void RenderImGui()
+        public static void RenderImGui()
         {
             Project prj = ProjectManager.CurrentProject;
 
@@ -104,13 +106,13 @@ namespace PAAnimator.Logic
             }
         }
 
-        private void RenderNodeProp(Node node)
+        private static void RenderNodeProp(Node node)
         {
             if (ImGui.Selectable($"Time: {node.Time} // {node.Name}", SelectedNode == node))
                 SelectedNode = node;
         }
 
-        public void Update()
+        public static void Update()
         {
             Project prj = ProjectManager.CurrentProject;
 
@@ -133,12 +135,14 @@ namespace PAAnimator.Logic
             if (Input.GetMouseDown(MouseButton.Button1) && !ImGui.GetIO().WantCaptureMouse)
                 SelectedNode = null;
 
-            prj.Nodes.ForEach(x =>
-            {
-                x.Update(viewPos);
-            });
-
             prj.Nodes.Sort((x, y) => x.Time.CompareTo(y.Time));
+            
+            prj.Nodes.ForEach(x => x.Update(viewPos));
+
+            if (CurrentlyDragging == null)
+                prj.Nodes.ForEach(x => x.Check(viewPos));
+            else
+                CurrentlyDragging.OnDrag();
 
             PointDrawData drawData;
             drawData.Points = new Point[prj.Nodes.Count];
