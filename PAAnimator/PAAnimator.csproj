@@ -8,6 +8,10 @@
     <DisableWinExeOutputInference>true</DisableWinExeOutputInference>
     <AssemblyName>PAAnimator</AssemblyName>
     <RootNamespace>PAAnimator</RootNamespace>
+    <Version>0.2</Version>
+    <Company>Reimnop</Company>
+    <Authors>Reimnop</Authors>
+    <Product>Project Arrhythmia Animator</Product>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

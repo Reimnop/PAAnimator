@@ -37,6 +37,8 @@ namespace PAAnimator.Logic
             RenderGlobals.View = Matrix4.CreateTranslation(-cameraPosition.X, -cameraPosition.Y, 0.0f);
             RenderGlobals.Projection = Matrix4.CreateOrthographic(Window.Main.ClientSize.X / zoomLevel, Window.Main.ClientSize.Y / zoomLevel, -10.0f, 10.0f);
 
+            Window.Main.Title = "Project Arrhythmia Animator | " + ProjectManager.CurrentProject.ProjectName;
+
             NodesManager.Update();
         }
 
