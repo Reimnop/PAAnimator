@@ -23,8 +23,8 @@ namespace PAAnimator.Logic
         public bool Bezier = false;
         public List<Vector2> Controls = new List<Vector2>()
         {
-            new Vector2(0.8f, 0.8f),
-            new Vector2(-0.8f, -0.8f)
+            new Vector2(5.0f, 1.0f),
+            new Vector2(-1.0f, -4.0f)
         };
 
         [NonSerialized]
@@ -66,6 +66,17 @@ namespace PAAnimator.Logic
 
             Point.Bezier = Bezier;
             Point.Controls = Controls.ToArray();
+
+            if (Bezier && NodesManager.SelectedNode == this)
+            {
+                //calculate abs pos
+                Vector2[] points = Controls.ToArray();
+
+                for (int i = 0; i < points.Length; i++)
+                    points[i] += Position;
+
+                BezierControlPointsRenderer.PushDrawQueue(points);
+            }
         }
 
         public void OnDrag()

@@ -51,6 +51,9 @@
     <None Update="Assets\Shaders\grid-vs.vert">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Assets\Shaders\bezier-hd-fs.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Assets\Shaders\node-fs.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -58,6 +61,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Assets\Shaders\arrow-vs.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Shaders\bezier-hd-vs.vert">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Assets\Shaders\node-vs.vert">

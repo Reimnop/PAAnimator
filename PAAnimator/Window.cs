@@ -26,6 +26,7 @@ namespace PAAnimator
             LineRenderer.Init();
             NodeRenderer.Init();
             ArrowRenderer.Init();
+            BezierControlPointsRenderer.Init();
 
             imGuiController = new ImGuiController();
             imGuiController.Init();
@@ -54,9 +55,14 @@ namespace PAAnimator
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
+            //enable states
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+
             BackgroundRenderer.Render(RenderGlobals.View, RenderGlobals.Projection);
             GridRenderer.Render(RenderGlobals.View, RenderGlobals.Projection);
             LineRenderer.Render(RenderGlobals.View, RenderGlobals.Projection);
+            BezierControlPointsRenderer.Render(RenderGlobals.View, RenderGlobals.Projection);
 
             imGuiController.RenderImGui();
 

@@ -9,7 +9,9 @@ namespace PAAnimator
 {
     public static class BezierControlPointsRenderer
     {
-        private static Shader shader = Shader.NodeShader;
+        private static Queue<Vector2[]> drawQueue = new Queue<Vector2[]>();
+
+        private static Shader shader = Shader.BezierHandle;
 
         private static Mesh mesh;
         private static int SSBO;
@@ -41,26 +43,34 @@ namespace PAAnimator
             GL.BindBuffer(BufferTarget.ShaderStorageBuffer, 0);
         }
 
-        public static void Render(Matrix4 view, Matrix4 projection, Point[] points)
+        public static void PushDrawQueue(Vector2[] points) 
         {
-            NodeData[] nodeDatas = new NodeData[points.Length];
+            drawQueue.Enqueue(points);
+        }
 
-            for (int i = 0; i < points.Length; i++)
+        public static void Render(Matrix4 view, Matrix4 projection)
+        {
+            while (drawQueue.Count > 0)
             {
-                nodeDatas[i].Highlighted = points[i].Highlighted;
-                nodeDatas[i].Transform = Matrix4.Transpose(Matrix4.CreateTranslation(new Vector3(points[i].Position)));
+                Vector2[] points = drawQueue.Dequeue();
+                Matrix4[] transforms = new Matrix4[points.Length];
+
+                for (int i = 0; i < points.Length; i++)
+                {
+                    transforms[i] = Matrix4.Transpose(Matrix4.CreateTranslation(new Vector3(points[i])));
+                }
+
+                GL.NamedBufferData(SSBO, Unsafe.SizeOf<Matrix4>() * transforms.Length, transforms, BufferUsageHint.DynamicCopy);
+
+                GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 0, SSBO);
+
+                shader.Use();
+                shader.SetMatrix4("mvp", view * projection);
+
+                mesh.Use();
+
+                GL.DrawElementsInstanced(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, IntPtr.Zero, points.Length);
             }
-
-            GL.NamedBufferData(SSBO, Unsafe.SizeOf<NodeData>() * nodeDatas.Length, nodeDatas, BufferUsageHint.DynamicCopy);
-
-            GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 0, SSBO);
-
-            shader.Use();
-            shader.SetMatrix4("mvp", view * projection);
-
-            mesh.Use();
-
-            GL.DrawElementsInstanced(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, IntPtr.Zero, points.Length);
         }
     }
 }
