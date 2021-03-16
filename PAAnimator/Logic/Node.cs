@@ -28,6 +28,9 @@ namespace PAAnimator.Logic
         };
 
         [NonSerialized]
+        public int? controlDragIndex = null;
+
+        [NonSerialized]
         public Point Point;
 
         [NonSerialized]
@@ -52,6 +55,10 @@ namespace PAAnimator.Logic
         {
             if (CheckPoint(viewPos) && Input.GetMouseDown(MouseButton.Button1))
                 return true;
+
+            if (controlDragIndex != null)
+                NodesManager.SelectedNode = this;
+
             return false;
         }
 
@@ -72,9 +79,39 @@ namespace PAAnimator.Logic
                 //calculate abs pos
                 Vector2[] points = Controls.ToArray();
 
-                for (int i = 0; i < points.Length; i++)
+                for (int i = 0; i < Controls.Count; i++)
                     points[i] += Position;
 
+                //control drag
+                if (controlDragIndex == null)
+                {
+                    for (int i = 0; i < Controls.Count; i++)
+                    {
+                        Vector2 absPos = points[i];
+
+                        Vector2 lowerLeft = absPos - new Vector2(0.25f, 0.25f);
+                        Vector2 upperRight = absPos + new Vector2(0.25f, 0.25f);
+
+                        if (viewPos.X > lowerLeft.X && viewPos.Y > lowerLeft.Y &&
+                            viewPos.X < upperRight.X && viewPos.Y < upperRight.Y &&
+                            Input.GetMouseDown(MouseButton.Button1))
+                        {
+                            controlDragIndex = i;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    Controls[(int)controlDragIndex] += NodesManager.MouseDeltaToView(Window.Main.MouseState.Delta) * 2.0f;
+
+                    if (Input.GetMouseUp(MouseButton.Button1))
+                    {
+                        controlDragIndex = null;
+                    }
+                }
+
+                //push for render
                 BezierControlPointsRenderer.PushDrawQueue(points);
             }
         }

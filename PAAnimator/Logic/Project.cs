@@ -69,13 +69,44 @@ namespace PAAnimator.Logic
             {
                 Node node = Nodes[i];
 
-                prefabObject.ObjectEvents.PositionEvents.Add(new PrefabObject.Events.PositionEvent
+                if (!node.Bezier || i == Nodes.Count - 1)
+                    prefabObject.ObjectEvents.PositionEvents.Add(new PrefabObject.Events.PositionEvent
+                    {
+                        Time = node.Time,
+                        X = node.Position.X,
+                        Y = node.Position.Y,
+                        CurveType = node.PositionEasing
+                    });
+                else if (i != Nodes.Count - 1)
                 {
-                    Time = node.Time,
-                    X = node.Position.X,
-                    Y = node.Position.Y,
-                    CurveType = node.PositionEasing
-                });
+                    //calculate length
+                    float l = Nodes[i + 1].Time - node.Time;
+
+                    //get control points
+                    Vector2[] controls = new Vector2[node.Controls.Count + 2];
+
+                    controls[0] = node.Position;
+                    controls[node.Controls.Count + 1] = Nodes[i + 1].Position;
+
+                    for (int j = 0; j < node.Controls.Count; j++)
+                    {
+                        controls[j + 1] = node.Position + node.Controls[j];
+                    }
+
+                    //calculate Bezier
+                    for (float t = 0.0f; t < 1.0f; t += 0.025f)
+                    {
+                        Vector2 v = Helper.Bezier(controls, t);
+
+                        prefabObject.ObjectEvents.PositionEvents.Add(new PrefabObject.Events.PositionEvent
+                        {
+                            Time = node.Time + t * l,
+                            X = v.X,
+                            Y = v.Y,
+                            CurveType = node.PositionEasing
+                        });
+                    }
+                }
 
                 prefabObject.ObjectEvents.ScaleEvents.Add(new PrefabObject.Events.ScaleEvent
                 {

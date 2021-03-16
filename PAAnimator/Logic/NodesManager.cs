@@ -131,21 +131,16 @@ namespace PAAnimator.Logic
             Vector2 rawPos = Input.GetMousePosition();
             Vector2 viewPos = MouseToView(rawPos);
 
+            prj.Nodes.Sort((x, y) => x.Time.CompareTo(y.Time));
+
+            prj.Nodes.ForEach(x => x.Update(viewPos));
+
             if (Input.GetMouseDown(MouseButton.Button1) && !ImGui.GetIO().WantCaptureMouse)
                 SelectedNode = null;
 
-            prj.Nodes.Sort((x, y) => x.Time.CompareTo(y.Time));
-            
-            prj.Nodes.ForEach(x => x.Update(viewPos));
-
             foreach (var node in prj.Nodes)
-            {
-                if (SelectedNode == node)
-                    continue;
-
                 if (node.CheckSelection(viewPos))
                     SelectedNode = node;
-            }
 
             if (CurrentlyDragging == null)
                 prj.Nodes.ForEach(x => x.Check(viewPos));
