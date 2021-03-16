@@ -7,8 +7,10 @@ namespace PAAnimator
 {
     public static class Helper
     {
-        public static Vector2 Bezier(Vector2[] controls, float t)
+        public static Vector2 Bezier(Vector2[] controls, float val)
         {
+            float t = MathF.Pow(val, 1.0f / (controls.Length - 1));
+
             float a = controls.Length - 1.0f;
             Vector2 output = Vector2.Zero;
             for (int i = 0; i < controls.Length; i++)

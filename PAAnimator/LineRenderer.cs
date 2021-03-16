@@ -9,6 +9,8 @@ namespace PAAnimator
     public struct Point
     {
         public Vector2 Position;
+        public bool Bezier;
+        public Vector2[] Controls;
         public bool Highlighted;
     }
 
@@ -52,16 +54,44 @@ namespace PAAnimator
             {
                 PointDrawData dd = lineDrawQueue.Dequeue();
 
-                Vector2[] poses = new Vector2[dd.Points.Length];
-                bool[] highlights = new bool[dd.Points.Length];
+                Point[] points = dd.Points;
 
-                for (int i = 0; i < poses.Length; i++)
+                List<Vector2> lineVertices = new List<Vector2>();
+
+                for (int i = 0; i < points.Length; i++)
                 {
-                    poses[i] = dd.Points[i].Position;
-                    highlights[i] = dd.Points[i].Highlighted;
+                    Point p = points[i];
+
+                    if (!p.Bezier || i == points.Length - 1)
+                    {
+                        lineVertices.Add(p.Position);
+                        continue;
+                    }
+
+                    if (i != points.Length - 1)
+                    {
+                        //get control points
+                        Vector2[] controls = new Vector2[p.Controls.Length + 2];
+
+                        controls[0] = p.Position;
+                        controls[p.Controls.Length + 1] = points[i + 1].Position;
+
+                        for (int j = 0; j < p.Controls.Length; j++)
+                        {
+                            controls[j + 1] = p.Position + p.Controls[j];
+                        }
+
+                        //calculate Bezier
+                        for (float t = 0.0f; t < 1.0f; t += 0.05f)
+                        {
+                            lineVertices.Add(Helper.Bezier(controls, t));
+                        }
+                    }
                 }
 
-                GL.NamedBufferData(VBO, Unsafe.SizeOf<Vector2>() * poses.Length, poses, BufferUsageHint.DynamicDraw);
+                Vector2[] lineVerticesArr = lineVertices.ToArray();
+
+                GL.NamedBufferData(VBO, Unsafe.SizeOf<Vector2>() * lineVerticesArr.Length, lineVerticesArr, BufferUsageHint.DynamicDraw);
 
                 shader.Use();
                 shader.SetMatrix4("mvp", view * projection);
@@ -69,10 +99,10 @@ namespace PAAnimator
 
                 GL.BindVertexArray(VAO);
 
-                GL.DrawArrays(PrimitiveType.LineStrip, 0, dd.Points.Length);
+                GL.DrawArrays(PrimitiveType.LineStrip, 0, lineVerticesArr.Length);
 
-                NodeRenderer.Render(view, projection, poses, highlights);
-                ArrowRenderer.Render(view, projection, poses);
+                NodeRenderer.Render(view, projection, points);
+                ArrowRenderer.Render(view, projection, points);
             }
         }
     }

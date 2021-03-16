@@ -1,19 +1,13 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+using System.Text;
 
 namespace PAAnimator
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 80)]
-    public struct NodeData
-    {
-        public Matrix4 Transform;
-        public bool Highlighted;
-    }
-
-    public static class NodeRenderer
+    public static class BezierControlPointsRenderer
     {
         private static Shader shader = Shader.NodeShader;
 
@@ -23,10 +17,10 @@ namespace PAAnimator
         public static void Init()
         {
             float[] vertices = new float[] {
-                 0.4f,  0.4f, 0.0f,  // top right
-                 0.4f, -0.4f, 0.0f,  // bottom right
-                -0.4f, -0.4f, 0.0f,  // bottom left
-                -0.4f,  0.4f, 0.0f,  // top left 
+                 0.2f,  0.2f, 0.0f,  // top right
+                 0.2f, -0.2f, 0.0f,  // bottom right
+                -0.2f, -0.2f, 0.0f,  // bottom left
+                -0.2f,  0.2f, 0.0f,  // top left 
             };
 
             uint[] indices = new uint[]

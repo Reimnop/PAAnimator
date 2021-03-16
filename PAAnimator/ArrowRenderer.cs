@@ -37,18 +37,49 @@ namespace PAAnimator
             GL.BindBuffer(BufferTarget.ShaderStorageBuffer, 0);
         }
 
-        public static void Render(Matrix4 view, Matrix4 projection, Vector2[] poses)
+        public static void Render(Matrix4 view, Matrix4 projection, Point[] points)
         {
-            Matrix4[] transMat = new Matrix4[poses.Length - 1];
+            Matrix4[] transMat = new Matrix4[points.Length - 1];
 
-            for (int i = 1; i < poses.Length; i++)
+            for (int i = 1; i < points.Length; i++)
             {
-                Vector2 midPoint = (poses[i] + poses[i - 1]) / 2.0f;
+                Vector2 midPoint;
 
-                Vector2 targ = poses[i];
-                Vector2 objectPos = midPoint;
-                targ.X = targ.X - objectPos.X;
-                targ.Y = targ.Y - objectPos.Y;
+                Vector2 targ;
+                Vector2 prev;
+
+                if (!points[i - 1].Bezier)
+                {
+                    midPoint = (points[i].Position + points[i - 1].Position) / 2.0f;
+
+                    targ = points[i].Position;
+                    prev = points[i - 1].Position;
+                }
+                else
+                {
+                    Point p = points[i - 1];
+
+                    //get control points
+                    Vector2[] controls = new Vector2[p.Controls.Length + 2];
+
+                    controls[0] = p.Position;
+                    controls[p.Controls.Length + 1] = points[i].Position;
+
+                    for (int j = 0; j < p.Controls.Length; j++)
+                    {
+                        controls[j + 1] = p.Position + p.Controls[j];
+                    }
+
+                    //calculate Bezier
+                    midPoint = Helper.Bezier(controls, 0.5f);
+
+                    prev = Helper.Bezier(controls, 0.45f);
+                    targ = Helper.Bezier(controls, 0.55f);
+                }
+
+
+                targ.X = targ.X - prev.X;
+                targ.Y = targ.Y - prev.Y;
 
                 float angle = MathF.Atan2(targ.Y, targ.X);
 

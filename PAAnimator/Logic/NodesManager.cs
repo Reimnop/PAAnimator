@@ -65,6 +65,8 @@ namespace PAAnimator.Logic
 
                 ImGui.Text("Animation");
 
+                ImGui.Checkbox("curves go brrr", ref SelectedNode.Bezier);
+
                 if (ImGui.BeginCombo("Position Easing", SelectedNode.PositionEasing.ToString()))
                 {
                     for (int i = 0; i < easings.Length; i++)
@@ -135,6 +137,15 @@ namespace PAAnimator.Logic
             prj.Nodes.Sort((x, y) => x.Time.CompareTo(y.Time));
             
             prj.Nodes.ForEach(x => x.Update(viewPos));
+
+            foreach (var node in prj.Nodes)
+            {
+                if (SelectedNode == node)
+                    continue;
+
+                if (node.CheckSelection(viewPos))
+                    SelectedNode = node;
+            }
 
             if (CurrentlyDragging == null)
                 prj.Nodes.ForEach(x => x.Check(viewPos));

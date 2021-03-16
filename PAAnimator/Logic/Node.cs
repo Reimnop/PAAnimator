@@ -2,6 +2,7 @@
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using PAPrefabToolkit.Data;
 using System;
+using System.Collections.Generic;
 
 namespace PAAnimator.Logic
 {
@@ -19,6 +20,13 @@ namespace PAAnimator.Logic
         public PrefabObjectEasing ScaleEasing = PrefabObjectEasing.Linear;
         public PrefabObjectEasing RotationEasing = PrefabObjectEasing.Linear;
 
+        public bool Bezier = false;
+        public List<Vector2> Controls = new List<Vector2>()
+        {
+            new Vector2(0.8f, 0.8f),
+            new Vector2(-0.8f, -0.8f)
+        };
+
         [NonSerialized]
         public Point Point;
 
@@ -32,13 +40,19 @@ namespace PAAnimator.Logic
 
         public void Check(Vector2 viewPos)
         {
-            if (CheckPoint(viewPos) && Input.GetMouseDown(MouseButton.Button1))
+            if (CheckSelection(viewPos))
             {
-                NodesManager.SelectedNode = this;
                 NodesManager.CurrentlyDragging = this;
 
                 temp = Position;
             }
+        }
+
+        public bool CheckSelection(Vector2 viewPos)
+        {
+            if (CheckPoint(viewPos) && Input.GetMouseDown(MouseButton.Button1))
+                return true;
+            return false;
         }
 
         public void Update(Vector2 viewPos)
@@ -49,6 +63,9 @@ namespace PAAnimator.Logic
                 Point.Highlighted = true;
             else
                 Point.Highlighted = false;
+
+            Point.Bezier = Bezier;
+            Point.Controls = Controls.ToArray();
         }
 
         public void OnDrag()
