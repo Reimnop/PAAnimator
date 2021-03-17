@@ -11,6 +11,7 @@ namespace PAAnimator
         #region DefaultShader
         public static Shader Grid;
         public static Shader Background;
+        public static Shader Preview;
         public static Shader LineShader;
         public static Shader NodeShader;
         public static Shader ArrowShader;
@@ -72,6 +73,7 @@ namespace PAAnimator
         {
             Grid = FromSourceFile("Assets/Shaders/grid-vs.vert", "Assets/Shaders/grid-fs.frag");
             Background = FromSourceFile("Assets/Shaders/bg-vs.vert", "Assets/Shaders/bg-fs.frag");
+            Preview = FromSourceFile("Assets/Shaders/preview-vs.vert", "Assets/Shaders/preview-fs.frag");
             LineShader = FromSourceFile("Assets/Shaders/line-vs.vert", "Assets/Shaders/line-fs.frag");
             NodeShader = FromSourceFile("Assets/Shaders/node-vs.vert", "Assets/Shaders/node-fs.frag");
             ArrowShader = FromSourceFile("Assets/Shaders/arrow-vs.vert", "Assets/Shaders/arrow-fs.frag");

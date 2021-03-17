@@ -13,7 +13,7 @@ namespace PAAnimator.Logic
         public float Time;
 
         public Vector2 Position = Vector2.Zero;
-        public Vector2 Scale = Vector2.One;
+        public Vector2 Scale = Vector2.One * 2.0f;
         public float Rotation = 0.0f;
 
         public PrefabObjectEasing PositionEasing = PrefabObjectEasing.Linear;

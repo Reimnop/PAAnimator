@@ -176,9 +176,25 @@ namespace PAAnimator.Logic
                     SelectedNode = node;
 
             if (CurrentlyDragging == null)
+            {
                 prj.Nodes.ForEach(x => x.Check(viewPos));
+
+                if (SelectedNode != null)
+                {
+                    if (Input.GetKeyDown(Keys.Up))
+                        SelectedNode.Position.Y += 1.0f;
+                    if (Input.GetKeyDown(Keys.Down))
+                        SelectedNode.Position.Y -= 1.0f;
+                    if (Input.GetKeyDown(Keys.Left))
+                        SelectedNode.Position.X -= 1.0f;
+                    if (Input.GetKeyDown(Keys.Right))
+                        SelectedNode.Position.X += 1.0f;
+                }
+            }
             else
+            {
                 CurrentlyDragging.OnDrag();
+            }
 
             PointDrawData drawData;
             drawData.Points = new Point[prj.Nodes.Count];

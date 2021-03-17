@@ -1,4 +1,5 @@
-﻿using OpenTK.Mathematics;
+﻿using Glide;
+using OpenTK.Mathematics;
 using PAPrefabToolkit;
 using PAPrefabToolkit.Data;
 using System;
@@ -18,13 +19,19 @@ namespace PAAnimator.Logic
             new Node("and third!") { Time = 2, Position = new Vector2(13, -5.6f) }
         };
 
-        public string ProjectName = "New Project";
+        public string ProjectName = "Untitled Project";
 
         public bool ProjectSettingsOpen = false;
 
         public Vector2 BackgroundOffset = Vector2.Zero;
         public Vector2 BackgroundScale = new Vector2(20.0f * 16.0f / 9.0f, 20.0f);
         public float BackgroundRotation = 0.0f;
+
+        public Vector2 PreviewPosition = Vector2.Zero;
+        public Vector2 PreviewScale = Vector2.One;
+        public float PreviewRotation = 0.0f;
+
+        public float Time = 0.0f;
 
         public void SerializeToFile(string path)
         {
@@ -65,17 +72,22 @@ namespace PAAnimator.Logic
             prefabObject.ObjectEvents.ScaleEvents.Clear();
             prefabObject.ObjectEvents.RotationEvents.Clear();
 
+            float cRot = 0.0f;
+
+            float timeOffset = Nodes[0].Time;
+
             for (int i = 0; i < Nodes.Count; i++)
             {
                 Node node = Nodes[i];
 
+                #region Position
                 if (!node.Bezier || i == Nodes.Count - 1)
                     prefabObject.ObjectEvents.PositionEvents.Add(new PrefabObject.Events.PositionEvent
                     {
-                        Time = node.Time,
+                        Time = node.Time - timeOffset,
                         X = node.Position.X,
                         Y = node.Position.Y,
-                        CurveType = node.PositionEasing
+                        CurveType = i > 0 && Nodes[i - 1].Bezier ? PrefabObjectEasing.Linear : node.PositionEasing 
                     });
                 else if (i != Nodes.Count - 1)
                 {
@@ -93,24 +105,36 @@ namespace PAAnimator.Logic
                         controls[j + 1] = node.Position + node.Controls[j];
                     }
 
+                    Func<float, float> easeFunc = Ease.ConversionTable[Nodes[i + 1].PositionEasing];
+
                     //calculate Bezier
                     for (float t = 0.0f; t < 1.0f; t += 0.025f)
                     {
-                        Vector2 v = Helper.Bezier(controls, t);
+                        Vector2 v = Helper.Bezier(controls, easeFunc(t));
 
-                        prefabObject.ObjectEvents.PositionEvents.Add(new PrefabObject.Events.PositionEvent
-                        {
-                            Time = node.Time + t * l,
-                            X = v.X,
-                            Y = v.Y,
-                            CurveType = node.PositionEasing
-                        });
+                        if (t != 0.0f)
+                            prefabObject.ObjectEvents.PositionEvents.Add(new PrefabObject.Events.PositionEvent
+                            {
+                                Time = node.Time + t * l - timeOffset,
+                                X = v.X,
+                                Y = v.Y,
+                                CurveType = PrefabObjectEasing.Linear
+                            });
+                        else
+                            prefabObject.ObjectEvents.PositionEvents.Add(new PrefabObject.Events.PositionEvent
+                            {
+                                Time = node.Time + t * l - timeOffset,
+                                X = v.X,
+                                Y = v.Y,
+                                CurveType = node.PositionEasing
+                            });
                     }
                 }
+                #endregion
 
                 prefabObject.ObjectEvents.ScaleEvents.Add(new PrefabObject.Events.ScaleEvent
                 {
-                    Time = node.Time,
+                    Time = node.Time - timeOffset,
                     X = node.Scale.X,
                     Y = node.Scale.Y,
                     CurveType = node.ScaleEasing
@@ -118,10 +142,12 @@ namespace PAAnimator.Logic
 
                 prefabObject.ObjectEvents.RotationEvents.Add(new PrefabObject.Events.RotationEvent
                 {
-                    Time = node.Time,
-                    X = node.Rotation,
+                    Time = node.Time - timeOffset,
+                    X = node.Rotation - cRot,
                     CurveType = node.RotationEasing
                 });
+
+                cRot = node.Rotation;
             }
 
             return PrefabBuilder.BuildPrefab(prefab, noValidate: true);

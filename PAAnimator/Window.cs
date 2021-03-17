@@ -6,6 +6,11 @@ using PAAnimator.Logic;
 
 namespace PAAnimator
 {
+    public static class Time
+    {
+        public static float DeltaTime;
+    }
+
     public sealed class Window : GameWindow
     {
         public static Window Main { private set; get; }
@@ -23,6 +28,7 @@ namespace PAAnimator
 
             BackgroundRenderer.Init();
             GridRenderer.Init();
+            PreviewRenderer.Init();
             LineRenderer.Init();
             NodeRenderer.Init();
             ArrowRenderer.Init();
@@ -38,13 +44,15 @@ namespace PAAnimator
 
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
+            Time.DeltaTime = (float)args.Time;
+
             ThreadManager.ExecuteAll();
 
             Input.InputUpdate(KeyboardState, MouseState);
 
             MainController.Update();
 
-            imGuiController.Update((float)args.Time);
+            imGuiController.Update(Time.DeltaTime);
         }
 
         protected override void OnRenderFrame(FrameEventArgs args)
@@ -61,6 +69,7 @@ namespace PAAnimator
 
             BackgroundRenderer.Render(RenderGlobals.View, RenderGlobals.Projection);
             GridRenderer.Render(RenderGlobals.View, RenderGlobals.Projection);
+            PreviewRenderer.Render(RenderGlobals.View, RenderGlobals.Projection);
             LineRenderer.Render(RenderGlobals.View, RenderGlobals.Projection);
             BezierControlPointsRenderer.Render(RenderGlobals.View, RenderGlobals.Projection);
 
