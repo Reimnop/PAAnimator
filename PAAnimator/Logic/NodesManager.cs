@@ -65,7 +65,40 @@ namespace PAAnimator.Logic
 
                 ImGui.Text("Animation");
 
-                ImGui.Checkbox("curves go brrr", ref SelectedNode.Bezier);
+                ImGui.Checkbox("Bezier", ref SelectedNode.Bezier);
+
+                if (SelectedNode.Bezier)
+                {
+                    ImGui.TreePush();
+
+                    int size = SelectedNode.Controls.Count;
+                    ImGui.DragInt("Size", ref size, 1.0f, 0);
+                    if (size > SelectedNode.Controls.Count)
+                    {
+                        int c = SelectedNode.Controls.Count;
+                        for (int i = c; i < size; i++)
+                            SelectedNode.Controls.Add(Vector2.Zero);
+                    }
+                    else if (size < SelectedNode.Controls.Count)
+                    {
+                        int c = SelectedNode.Controls.Count;
+                        for (int i = size; i < c; i++)
+                            SelectedNode.Controls.RemoveAt(SelectedNode.Controls.Count - 1);
+                    }
+
+                    for (int i = 0; i < SelectedNode.Controls.Count; i++)
+                    {
+                        Vector2 v = SelectedNode.Controls[i];
+
+                        ImGui.PushID(i);
+                        ImGuiExtension.DragVector2($"Handle {i}", ref v, Vector2.Zero);
+                        ImGui.PopID();
+
+                        SelectedNode.Controls[i] = v;
+                    }
+
+                    ImGui.TreePop();
+                }
 
                 if (ImGui.BeginCombo("Position Easing", SelectedNode.PositionEasing.ToString()))
                 {
