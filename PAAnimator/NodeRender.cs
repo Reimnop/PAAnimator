@@ -47,14 +47,14 @@ namespace PAAnimator
             GL.BindBuffer(BufferTarget.ShaderStorageBuffer, 0);
         }
 
-        public static void Render(Matrix4 view, Matrix4 projection, Vector2[] poses, bool[] highlights)
+        public static void Render(Matrix4 view, Matrix4 projection, Point[] points)
         {
-            NodeData[] nodeDatas = new NodeData[poses.Length];
+            NodeData[] nodeDatas = new NodeData[points.Length];
 
-            for (int i = 0; i < poses.Length; i++)
+            for (int i = 0; i < points.Length; i++)
             {
-                nodeDatas[i].Highlighted = highlights[i];
-                nodeDatas[i].Transform = Matrix4.Transpose(Matrix4.CreateTranslation(new Vector3(poses[i])));
+                nodeDatas[i].Highlighted = points[i].Highlighted;
+                nodeDatas[i].Transform = Matrix4.Transpose(Matrix4.CreateTranslation(new Vector3(points[i].Position)));
             }
 
             GL.NamedBufferData(SSBO, Unsafe.SizeOf<NodeData>() * nodeDatas.Length, nodeDatas, BufferUsageHint.DynamicCopy);
@@ -66,7 +66,7 @@ namespace PAAnimator
 
             mesh.Use();
 
-            GL.DrawElementsInstanced(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, IntPtr.Zero, poses.Length);
+            GL.DrawElementsInstanced(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, IntPtr.Zero, points.Length);
         }
     }
 }

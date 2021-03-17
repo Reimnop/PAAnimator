@@ -16,6 +16,7 @@ namespace PAAnimator.Logic
         public static void Init()
         {
             NodesManager.Init();
+            PreviewManager.Init();
 
             DocumentationManager.Init(File.ReadAllText("Assets/Documentation.txt"));
 
@@ -38,8 +39,10 @@ namespace PAAnimator.Logic
             RenderGlobals.Projection = Matrix4.CreateOrthographic(Window.Main.ClientSize.X / zoomLevel, Window.Main.ClientSize.Y / zoomLevel, -10.0f, 10.0f);
 
             Window.Main.Title = "Project Arrhythmia Animator | " + ProjectManager.CurrentProject.ProjectName;
-
+            
             NodesManager.Update();
+            ProjectManager.Update();
+            PreviewManager.Update();
         }
 
         private static void ImGuiRender()
@@ -53,13 +56,13 @@ namespace PAAnimator.Logic
             {
                 if (ImGui.BeginMenu("File"))
                 {
-                    if (ImGui.MenuItem("Open"))
+                    if (ImGui.MenuItem("Open", "Ctrl+O"))
                         ProjectManager.OpenProject();
 
-                    if (ImGui.MenuItem("Save"))
+                    if (ImGui.MenuItem("Save", "Ctrl+S"))
                         ProjectManager.SaveProject();
 
-                    if (ImGui.MenuItem("Save as"))
+                    if (ImGui.MenuItem("Save as", "Ctrl+Shift+S"))
                         ProjectManager.SaveProject(true);
 
                     if (ImGui.MenuItem("Export to prefab..."))
@@ -94,6 +97,36 @@ namespace PAAnimator.Logic
                             }
                         }
 
+                        if (ImGui.MenuItem("Object Preview"))
+                        {
+                            using (var ofd = new OpenFileDialog())
+                            {
+                                ofd.Filter = "Image|*.png;*.jpg";
+
+                                ofd.ShowDialog();
+
+                                if (!string.IsNullOrEmpty(ofd.FileName))
+                                {
+                                    PreviewRenderer.PreviewTexture = new Texture().FromFile(ofd.FileName);
+                                }
+                            }
+                        }
+
+                        if (ImGui.MenuItem("Audio"))
+                        {
+                            using (var ofd = new OpenFileDialog())
+                            {
+                                ofd.Filter = "Audio File|*.ogg";
+
+                                ofd.ShowDialog();
+
+                                if (!string.IsNullOrEmpty(ofd.FileName))
+                                {
+                                    PreviewManager.LoadAudio(ofd.FileName);
+                                }
+                            }
+                        }
+
                         ImGui.End();
                     }
 
@@ -124,7 +157,7 @@ namespace PAAnimator.Logic
 
             ProjectManager.RenderImGui();
             NodesManager.RenderImGui();
-
+            PreviewManager.RenderImGui();
             DocumentationManager.RenderImGui();
         }
     }

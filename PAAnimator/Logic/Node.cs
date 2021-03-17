@@ -2,6 +2,7 @@
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using PAPrefabToolkit.Data;
 using System;
+using System.Collections.Generic;
 
 namespace PAAnimator.Logic
 {
@@ -12,12 +13,22 @@ namespace PAAnimator.Logic
         public float Time;
 
         public Vector2 Position = Vector2.Zero;
-        public Vector2 Scale = Vector2.One;
+        public Vector2 Scale = Vector2.One * 2.0f;
         public float Rotation = 0.0f;
 
         public PrefabObjectEasing PositionEasing = PrefabObjectEasing.Linear;
         public PrefabObjectEasing ScaleEasing = PrefabObjectEasing.Linear;
         public PrefabObjectEasing RotationEasing = PrefabObjectEasing.Linear;
+
+        public bool Bezier = false;
+        public List<Vector2> Controls = new List<Vector2>()
+        {
+            new Vector2(5.0f, 1.0f),
+            new Vector2(-1.0f, -4.0f)
+        };
+
+        [NonSerialized]
+        public int? controlDragIndex = null;
 
         [NonSerialized]
         public Point Point;
@@ -32,13 +43,23 @@ namespace PAAnimator.Logic
 
         public void Check(Vector2 viewPos)
         {
-            if (CheckPoint(viewPos) && Input.GetMouseDown(MouseButton.Button1))
+            if (CheckSelection(viewPos))
             {
-                NodesManager.SelectedNode = this;
                 NodesManager.CurrentlyDragging = this;
 
                 temp = Position;
             }
+        }
+
+        public bool CheckSelection(Vector2 viewPos)
+        {
+            if (CheckPoint(viewPos) && Input.GetMouseDown(MouseButton.Button1))
+                return true;
+
+            if (controlDragIndex != null)
+                NodesManager.SelectedNode = this;
+
+            return false;
         }
 
         public void Update(Vector2 viewPos)
@@ -49,6 +70,50 @@ namespace PAAnimator.Logic
                 Point.Highlighted = true;
             else
                 Point.Highlighted = false;
+
+            Point.Bezier = Bezier;
+            Point.Controls = Controls.ToArray();
+
+            if (Bezier && NodesManager.SelectedNode == this)
+            {
+                //calculate abs pos
+                Vector2[] points = Controls.ToArray();
+
+                for (int i = 0; i < Controls.Count; i++)
+                    points[i] += Position;
+
+                //control drag
+                if (controlDragIndex == null)
+                {
+                    for (int i = 0; i < Controls.Count; i++)
+                    {
+                        Vector2 absPos = points[i];
+
+                        Vector2 lowerLeft = absPos - new Vector2(0.25f, 0.25f);
+                        Vector2 upperRight = absPos + new Vector2(0.25f, 0.25f);
+
+                        if (viewPos.X > lowerLeft.X && viewPos.Y > lowerLeft.Y &&
+                            viewPos.X < upperRight.X && viewPos.Y < upperRight.Y &&
+                            Input.GetMouseDown(MouseButton.Button1))
+                        {
+                            controlDragIndex = i;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    Controls[(int)controlDragIndex] += NodesManager.MouseDeltaToView(Window.Main.MouseState.Delta) * 2.0f;
+
+                    if (Input.GetMouseUp(MouseButton.Button1))
+                    {
+                        controlDragIndex = null;
+                    }
+                }
+
+                //push for render
+                BezierControlPointsRenderer.PushDrawQueue(points);
+            }
         }
 
         public void OnDrag()

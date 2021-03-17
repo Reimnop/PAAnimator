@@ -65,6 +65,41 @@ namespace PAAnimator.Logic
 
                 ImGui.Text("Animation");
 
+                ImGui.Checkbox("Bezier", ref SelectedNode.Bezier);
+
+                if (SelectedNode.Bezier)
+                {
+                    ImGui.TreePush();
+
+                    int size = SelectedNode.Controls.Count;
+                    ImGui.DragInt("Size", ref size, 1.0f, 0);
+                    if (size > SelectedNode.Controls.Count)
+                    {
+                        int c = SelectedNode.Controls.Count;
+                        for (int i = c; i < size; i++)
+                            SelectedNode.Controls.Add(Vector2.Zero);
+                    }
+                    else if (size < SelectedNode.Controls.Count)
+                    {
+                        int c = SelectedNode.Controls.Count;
+                        for (int i = size; i < c; i++)
+                            SelectedNode.Controls.RemoveAt(SelectedNode.Controls.Count - 1);
+                    }
+
+                    for (int i = 0; i < SelectedNode.Controls.Count; i++)
+                    {
+                        Vector2 v = SelectedNode.Controls[i];
+
+                        ImGui.PushID(i);
+                        ImGuiExtension.DragVector2($"Handle {i}", ref v, Vector2.Zero);
+                        ImGui.PopID();
+
+                        SelectedNode.Controls[i] = v;
+                    }
+
+                    ImGui.TreePop();
+                }
+
                 if (ImGui.BeginCombo("Position Easing", SelectedNode.PositionEasing.ToString()))
                 {
                     for (int i = 0; i < easings.Length; i++)
@@ -129,17 +164,37 @@ namespace PAAnimator.Logic
             Vector2 rawPos = Input.GetMousePosition();
             Vector2 viewPos = MouseToView(rawPos);
 
+            prj.Nodes.Sort((x, y) => x.Time.CompareTo(y.Time));
+
+            prj.Nodes.ForEach(x => x.Update(viewPos));
+
             if (Input.GetMouseDown(MouseButton.Button1) && !ImGui.GetIO().WantCaptureMouse)
                 SelectedNode = null;
 
-            prj.Nodes.Sort((x, y) => x.Time.CompareTo(y.Time));
-            
-            prj.Nodes.ForEach(x => x.Update(viewPos));
+            foreach (var node in prj.Nodes)
+                if (node.CheckSelection(viewPos))
+                    SelectedNode = node;
 
             if (CurrentlyDragging == null)
+            {
                 prj.Nodes.ForEach(x => x.Check(viewPos));
+
+                if (SelectedNode != null)
+                {
+                    if (Input.GetKeyDown(Keys.Up))
+                        SelectedNode.Position.Y += 1.0f;
+                    if (Input.GetKeyDown(Keys.Down))
+                        SelectedNode.Position.Y -= 1.0f;
+                    if (Input.GetKeyDown(Keys.Left))
+                        SelectedNode.Position.X -= 1.0f;
+                    if (Input.GetKeyDown(Keys.Right))
+                        SelectedNode.Position.X += 1.0f;
+                }
+            }
             else
+            {
                 CurrentlyDragging.OnDrag();
+            }
 
             PointDrawData drawData;
             drawData.Points = new Point[prj.Nodes.Count];

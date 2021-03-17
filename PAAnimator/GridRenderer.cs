@@ -31,9 +31,6 @@ namespace PAAnimator
 
         public static void Render(Matrix4 view, Matrix4 projection)
         {
-            GL.Enable(EnableCap.Blend);
-            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-
             shader.Use();
             shader.SetMatrix4("viewInverse", view.Inverted());
             shader.SetMatrix4("projInverse", projection.Inverted());
