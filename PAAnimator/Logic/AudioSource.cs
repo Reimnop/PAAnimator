@@ -30,9 +30,9 @@ namespace PAAnimator.Logic
             output.Play();
         }
 
-        public void Stop()
+        public void Pause()
         {
-            output.Stop();
+            output.Pause();
         }
 
         public void Seek(float position)

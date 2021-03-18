@@ -3,6 +3,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 using ImGuiNET;
 using System.Collections.Generic;
 using System.Text;
+using PAAnimator.Gui;
 
 namespace PAAnimator.Logic
 {
@@ -42,7 +43,7 @@ namespace PAAnimator.Logic
                 if (!audioSource.IsPlaying)
                     audioSource.Play();
                 else
-                    audioSource.Stop();
+                    audioSource.Pause();
             }
 
             if (audioSource.IsPlaying)
@@ -61,12 +62,7 @@ namespace PAAnimator.Logic
 
                 Project prj = ProjectManager.CurrentProject;
 
-                float t = prj.Time;
-                float _t = t;
-                ImGui.SliderFloat("Time", ref t, 0.0f, audioSource.GetLength());
-
-                if (_t != t)
-                    audioSource.Seek(t);
+                ImGui.Text(TimeSpan.FromSeconds(prj.Time).ToString(@"mm\:ss\:fff"));
 
                 ImGui.SameLine();
 
@@ -75,8 +71,16 @@ namespace PAAnimator.Logic
 
                 ImGui.SameLine();
 
-                if (ImGui.Button("Stop"))
-                    audioSource.Stop();
+                if (ImGui.Button("Pause"))
+                    audioSource.Pause();
+
+                float t = prj.Time;
+                float _t = t;
+
+                ImGuiExtension.Timeline(ref t, 0.0f, audioSource.GetLength(), prj.Nodes);
+
+                if (_t != t)
+                    audioSource.Seek(t);
 
                 NoAudio:
                 ImGui.End();
